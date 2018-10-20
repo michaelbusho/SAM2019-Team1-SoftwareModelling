@@ -1,17 +1,13 @@
 # SAM2019
 
-
 A workshop named “Software Architecture Mining” for an 
 International Software Engineering Conference to be held 
 in June 2019.
-
 
 ## Architecture
 
 - Java 8
 - Maven
-
-
 
 ## How to run it
 
@@ -31,5 +27,4 @@ Murtaza Tamjeed
 ```
 
 ## License
-
 [MIT](https://choosealicense.com/licenses/mit/)

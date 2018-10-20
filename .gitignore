@@ -1,0 +1,22 @@
+# Build/Maven #
+###############
+**/target/
+**/node_modules/
+.DS_Store
+
+
+# Eclipse #
+###########
+.project
+.classpath
+.settings
+**/bin/
+.metadata/
+# Spring #
+############
+**/.springBeans
+
+# IntelliJ #
+############
+.idea/
+*.iml

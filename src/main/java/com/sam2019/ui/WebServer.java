@@ -58,6 +58,8 @@ public class WebServer {
   //
   // Attributes
   //
+  public static final String GET_METHOD = "GET";
+  public static final String POST_METHOD = "POST";
 
   private final TemplateEngine templateEngine;
 
@@ -136,7 +138,7 @@ public class WebServer {
     // Shows register page.
     get(REGISTER_URL, new RegisterController(), templateEngine);
 
-    // method to get register credential from user.
+    // method to obtain register credential from user.
     post(REGISTER_URL, new RegisterController(), templateEngine);
   }
 

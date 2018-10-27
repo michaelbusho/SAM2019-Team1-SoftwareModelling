@@ -10,12 +10,24 @@ import java.util.Map;
 
 public class HomeController implements TemplateViewRoute {
 
+
+
     @Override
     public ModelAndView handle(Request request, Response response) {
         // start building the View-Model
         final Map<String, Object> vm = new HashMap<>();
 
-        return new ModelAndView(vm, "home.ftl");
+        //Check the kind of request on the home route
+        if (request.requestMethod() == WebServer.GET_METHOD) {
+            return new ModelAndView(vm, "home.ftl");
+        }
+        else if(request.requestMethod() == WebServer.POST_METHOD){
+            return new ModelAndView(vm, "home.ftl");
+        }
+        else{
+            return new ModelAndView(vm, "home.ftl");
+        }
+
     }
 
 }

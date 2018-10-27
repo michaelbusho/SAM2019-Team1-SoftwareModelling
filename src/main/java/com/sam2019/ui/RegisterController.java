@@ -15,6 +15,15 @@ public class RegisterController implements TemplateViewRoute {
         // start building the View-Model
         final Map<String, Object> vm = new HashMap<>();
 
-        return new ModelAndView(vm, "register.ftl");
+        //Check the kind of request on the register route
+        if (request.requestMethod() == WebServer.GET_METHOD) {
+            return new ModelAndView(vm, "register.ftl");
+        }
+        else if(request.requestMethod() == WebServer.POST_METHOD){
+            return new ModelAndView(vm, "register.ftl");
+        }
+        else{
+            return new ModelAndView(vm, "register.ftl");
+        }
     }
 }

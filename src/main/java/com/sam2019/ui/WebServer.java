@@ -4,8 +4,10 @@ import static spark.Spark.get;
 import static spark.Spark.post;
 import static spark.SparkBase.staticFileLocation;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
+import com.sam2019.model.User;
 import spark.TemplateEngine;
 
 
@@ -62,6 +64,9 @@ public class WebServer {
   public static final String POST_METHOD = "POST";
 
   private final TemplateEngine templateEngine;
+
+  //This to be replaced with a some kind of a database
+  ArrayList<User> usersDB = new ArrayList<>();
 
   //
   // Constructor
@@ -133,13 +138,15 @@ public class WebServer {
     //// code clean; using small classes.
 
     // Shows Home page.
-    get(HOME_URL, new HomeController(), templateEngine);
+    get(HOME_URL, new HomeController(usersDB), templateEngine);
+    // Obtain login try.
+    post(HOME_URL, new HomeController(usersDB), templateEngine);
 
     // Shows register page.
-    get(REGISTER_URL, new RegisterController(), templateEngine);
+    get(REGISTER_URL, new RegisterController(usersDB), templateEngine);
 
     // method to obtain register credential from user.
-    post(REGISTER_URL, new RegisterController(), templateEngine);
+    post(REGISTER_URL, new RegisterController(usersDB), templateEngine);
   }
 
 }

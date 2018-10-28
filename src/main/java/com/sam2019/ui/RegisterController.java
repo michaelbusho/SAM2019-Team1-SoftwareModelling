@@ -6,6 +6,7 @@ import spark.Request;
 import spark.Response;
 import spark.TemplateViewRoute;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,7 +16,7 @@ import static spark.Spark.halt;
 public class RegisterController implements TemplateViewRoute {
 
     static final public String MESSAGE_ATTRIBUTE = "message";
-    static final public String MESSAGE_FAIL_VALUE = "Could not register!Try different combination";
+    static final public String MESSAGE_FAIL_VALUE = "The User Name or Email is already registered";
     static final public String MESSAGE_SUCCESS_VALUE = "Account successfully created";
 
 
@@ -41,16 +42,17 @@ public class RegisterController implements TemplateViewRoute {
             return new ModelAndView(vm, "register.ftl");
         }
         else if(request.requestMethod() == WebServer.POST_METHOD){
-            String givenUsername = request.queryParams("username");
-            String givenEmail = request.queryParams("email");
-            String givenPassword = request.queryParams("password");
-            String givenConfirmedPassword = request.queryParams("confirm_password");
+            String givenUsername = request.queryParams("username").trim();
+            String givenEmail = request.queryParams("email").trim();
+            String givenPassword = request.queryParams("password").trim();
+            String givenConfirmedPassword = request.queryParams("confirm_password").trim();
 
             System.out.println("I just received a POST request to route: \"/post\" with the parameters:");
             System.out.println("username: " + givenUsername + " email: " + givenEmail + " password: " + givenPassword + " confirmed pass: " + givenConfirmedPassword);
 
             if(validateRegisterCredentials(givenUsername,givenEmail,givenPassword, givenConfirmedPassword, this.users)){
 
+                registerUserCredentials(givenUsername, givenEmail, givenPassword, this.users);
                 vm.put(MESSAGE_ATTRIBUTE, MESSAGE_SUCCESS_VALUE);
                 return new ModelAndView(vm, "home.ftl");
 
@@ -71,15 +73,26 @@ public class RegisterController implements TemplateViewRoute {
     //Fix this function to validate credentials properly (Check if the combination is on the registered users list)
     private boolean validateRegisterCredentials(String username, String email, String password, String confirmed_pass, ArrayList<User> users){
 
-        boolean isValid = false;
-
-        isValid = (username==null|| email==null||password==null||confirmed_pass==null||!password.equals(confirmed_pass))?false:true;
+        boolean isValid = true;
 
         //check if the combination is not already on the list
+
+        for (int i=0; i<users.size(); i++)
+            if(users.get(i).getUserName().equals(username) || users.get(i).getEmail().equals(email)){
+                isValid = false;
+                break;
+            }
+
 
         return isValid;
     }
 
+    private void registerUserCredentials (String username, String email, String password, ArrayList<User> users){
+
+        User newUser = new User(username, email, password);
+        users.add(newUser);
+
+    }
 
 
 }

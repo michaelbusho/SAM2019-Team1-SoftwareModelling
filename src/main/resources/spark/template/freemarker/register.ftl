@@ -29,10 +29,10 @@
                 <input type="email" class="form-control" name="email" placeholder="Email Address" required="required">
             </div>
         </div>
-        <div class="form-group">
+        <div class="form-group">"
             <div class="input-group">
                 <span class="input-group-addon"><i class="fa fa-lock"></i></span>
-                <input type="text" class="form-control" name="password" placeholder="Password" required="required">
+                <input type="password" id="password" class="form-control" name="password" placeholder="Password" required="required" pattern="[^()/><\][\\\x22,;|]+" title="Password contains invalid characters (()/><\][\,;|]">
             </div>
         </div>
         <div class="form-group">
@@ -41,13 +41,18 @@
 					<i class="fa fa-lock"></i>
 					<i class="fa fa-check"></i>
 				</span>
-                <input type="text" class="form-control" name="confirm_password" placeholder="Confirm Password" required="required">
+                <input type="password" id="confirm_password" class="form-control" name="confirm_password" placeholder="Confirm Password" required="required">
             </div>
         </div>
-        <div class="form-group">
+        <#if message??>
+        <div class="text-center alert-danger" >${message}</div>
+        </#if>
+        <div class="form-group ">
             <button type="submit" class="btn btn-primary btn-lg center-block">Sign Up</button>
+            <script src="/javascript/register.js"></script>
         </div>
     </form>
+
     <div class="text-center">Already have an account? <a href="/">Login here</a></div>
 </div>
 

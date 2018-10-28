@@ -29,7 +29,7 @@
                 <input type="email" class="form-control" name="email" placeholder="Email Address" required="required">
             </div>
         </div>
-        <div class="form-group">"
+        <div class="form-group">
             <div class="input-group">
                 <span class="input-group-addon"><i class="fa fa-lock"></i></span>
                 <input type="password" id="password" class="form-control" name="password" placeholder="Password" required="required" pattern="[^()/><\][\\\x22,;|]+" title="Password contains invalid characters (()/><\][\,;|]">
@@ -49,7 +49,6 @@
         </#if>
         <div class="form-group ">
             <button type="submit" class="btn btn-primary btn-lg center-block">Sign Up</button>
-            <script src="/javascript/register.js"></script>
         </div>
     </form>
 
@@ -60,7 +59,7 @@
 
 
 
-  <#include "partials/_includedScripts.ftl">
-
+    <#include "partials/_includedScripts.ftl">
+    <script src="/javascript/register.js"></script>
 </body>
 </html>

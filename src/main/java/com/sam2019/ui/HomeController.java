@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import static spark.Spark.halt;
+
 public class HomeController implements TemplateViewRoute {
 
     static final private String MESSAGE_ATTRIBUTE = "message";
@@ -49,7 +51,9 @@ public class HomeController implements TemplateViewRoute {
 
             if(validateLoginCredentials(givenUsername, givenPassword, this.users)){
 
-                return new ModelAndView(vm, "home.ftl"); //change to redirect to user profile if valid
+                response.redirect(WebServer.PROFILE_URL);
+                halt();
+                return null;
             }else{
                 System.out.println("credentials not valid");
                 vm.put(MESSAGE_ATTRIBUTE, MESSAGE_FAIL_VALUE);

@@ -46,11 +46,12 @@ public class HomeController implements TemplateViewRoute {
             System.out.println("I just received a POST request to route: \"/\" with the parameters: username - "+ givenUsername +" and password - " + givenPassword);
 
 
+
             if(validateLoginCredentials(givenUsername, givenPassword, this.users)){
 
                 return new ModelAndView(vm, "home.ftl"); //change to redirect to user profile if valid
             }else{
-
+                System.out.println("credentials not valid");
                 vm.put(MESSAGE_ATTRIBUTE, MESSAGE_FAIL_VALUE);
                 return new ModelAndView(vm, "home.ftl");
             }
@@ -68,12 +69,22 @@ public class HomeController implements TemplateViewRoute {
 
     //Fix this function to validate credentials properly (Check if the combination is on the registered users list)
     private boolean validateLoginCredentials(String username, String password,  ArrayList<User> users){
-
+        //////////
         boolean isValid = false;
 
-        isValid = (username==null||password==null)?false:true;
+        //isValid = (username==null||password==null)?false:true;
 
         //check if the combination is already on the list
+
+        //if username exists in users true else ...
+
+
+        for (User currentUser : users)
+        {
+            if(currentUser.getUserName().equals(username) && currentUser.getPassword().equals(password)){
+                isValid=true;
+            }
+        }
 
         return isValid;
     }

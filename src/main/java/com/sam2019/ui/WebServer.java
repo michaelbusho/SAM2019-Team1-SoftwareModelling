@@ -56,6 +56,7 @@ public class WebServer {
    * The URL pattern to request the Game page.
    */
   public static final String REGISTER_URL = "/register";
+  public static final String PROFILE_URL = "/profile";
 
   //
   // Attributes
@@ -147,6 +148,9 @@ public class WebServer {
 
     // method to obtain register credential from user.
     post(REGISTER_URL, new RegisterController(usersDB), templateEngine);
+
+    // Shows profile page.
+    get(PROFILE_URL, new ProfileController(), templateEngine);
   }
 
 }

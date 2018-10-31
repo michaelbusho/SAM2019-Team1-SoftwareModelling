@@ -6,8 +6,6 @@
 </head>
 <body>
 
-
-
 <div class="sam-title">
     <h1> SAM 2019 </h1>
 </div>
@@ -22,14 +20,19 @@
         <hr>
         <div class="form-group">
             <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-user"></i></span>
-                <input type="text" class="form-control" name="username" placeholder="Username" required="required">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fa fa-user"></i></span>
+                    <input type="text" class="form-control" name="username" placeholder="Username" required="required">
+                </div>
+
             </div>
         </div>
         <div class="form-group">
             <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-lock"></i></span>
-                <input type="password" class="form-control" name="password" placeholder="Password" required="required">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fa fa-lock"></i></span>
+                    <input type="password" class="form-control" name="password" placeholder="Password" required="required">
+                </div>
             </div>
         </div>
         <div class="form-group">

@@ -51,22 +51,20 @@
     list-style: none;
 }
 .header-scrolled .nav-menu li:hover > a, .header-scrolled .nav-menu > .menu-active > a {
-    color: #18d26e;
+    color: #50b8b3;
 }
 .header-scrolled .nav-menu a {
     color: black;
 }
 .nav-menu li:hover > a, .nav-menu > .menu-active > a {
-    color: #18d26e;
+    color: #50b8b3;
 }
 .nav-menu a {
     padding: 0 8px 10px 8px;
     text-decoration: none;
     display: inline-block;
     color: #000;
-    font-family: "Montserrat", sans-serif;
-    font-weight: 700;
-    font-size: 13px;
+
     text-transform: uppercase;
     outline: none;
 }
@@ -135,7 +133,7 @@ body.mobile-nav-active #mobile-nav {
     font-family: "Montserrat", sans-serif;
 }
 #mobile-nav ul .menu-has-children i.fa-chevron-up {
-    color: #18d26e;
+    color: #19aa8d;
 }
 #mobile-nav ul .menu-has-children i {
     position: absolute;
@@ -146,7 +144,7 @@ body.mobile-nav-active #mobile-nav {
     color: #fff;
 }
 #mobile-nav ul .menu-item-active {
-    color: #18d26e;
+    color: #19aa8d;
 }
 #mobile-nav ul li li {
     padding-left: 30px;

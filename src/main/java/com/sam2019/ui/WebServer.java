@@ -1,13 +1,14 @@
 package com.sam2019.ui;
 
-import static spark.Spark.get;
-import static spark.Spark.post;
+import static spark.Spark.*;
 import static spark.SparkBase.staticFileLocation;
 
 import java.util.ArrayList;
 import java.util.Objects;
 
 import com.sam2019.model.User;
+import spark.Request;
+import spark.Session;
 import spark.TemplateEngine;
 
 
@@ -57,6 +58,7 @@ public class WebServer {
    */
   public static final String REGISTER_URL = "/register";
   public static final String PROFILE_URL = "/profile";
+  public static final String SIGNOUT_URL = "/signOut";
 
   //
   // Attributes
@@ -104,7 +106,6 @@ public class WebServer {
   public void initialize() {
     // Configuration to serve static files
     staticFileLocation("/public");
-
     //// Setting any route (or filter) in Spark triggers initialization of the
     //// embedded Jetty web server.
 
@@ -138,6 +139,12 @@ public class WebServer {
     //// Create separate Route classes to handle each route; this keeps your
     //// code clean; using small classes.
 
+
+
+    //Call function that sets all the url restrictions
+    setUrlRestrictions();
+
+
     // Shows Home page.
     get(HOME_URL, new HomeController(usersDB), templateEngine);
     // Obtain login try.
@@ -151,6 +158,50 @@ public class WebServer {
 
     // Shows profile page.
     get(PROFILE_URL, new ProfileController(), templateEngine);
+
+    // exit
+    get(SIGNOUT_URL, new SignOutController(), templateEngine);
+
+
   }
+
+
+  private void setUrlRestrictions(){
+
+      ArrayList<String> guestRoutes =  new ArrayList<String>();
+      ArrayList<String> adminRoutes =  new ArrayList<String>();
+
+      //Guest routes
+      guestRoutes.add(HOME_URL);
+      guestRoutes.add(REGISTER_URL);
+
+
+      //Admin routes
+      adminRoutes.add(PROFILE_URL);
+      adminRoutes.add(SIGNOUT_URL);
+
+      // Restrict routes only for Guests
+      for (String route : guestRoutes){
+          before(route,(request, response) -> {
+              if (request.session().attribute("user")!=null) {
+                  response.redirect(PROFILE_URL);
+                  halt();
+              }
+          });
+      }
+
+      // Restrict routes only for Authorized
+      for (String route : adminRoutes){
+          before(route,(request, response) -> {
+
+              if (request.session().attribute("user")==null) {
+                  response.redirect(HOME_URL);
+                  halt();
+              }
+          });
+      }
+  }
+
+
 
 }

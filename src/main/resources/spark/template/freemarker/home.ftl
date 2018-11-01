@@ -40,7 +40,7 @@
         </div>
 
         <#if message??>
-            <div class="message">${message}</div>
+            <div class="message ">${message}</div>
         </#if>
         <!--
         <div class="clearfix">

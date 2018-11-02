@@ -1,5 +1,6 @@
 package com.sam2019.ui;
 
+import com.sam2019.model.SQLiteConnection;
 import com.sam2019.model.User;
 import spark.ModelAndView;
 import spark.Request;
@@ -12,6 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static spark.Spark.halt;
+
 
 public class RegisterController implements TemplateViewRoute {
 
@@ -50,9 +52,9 @@ public class RegisterController implements TemplateViewRoute {
             System.out.println("I just received a POST request to route: \"/post\" with the parameters:");
             System.out.println("username: " + givenUsername + " email: " + givenEmail + " password: " + givenPassword + " confirmed pass: " + givenConfirmedPassword);
 
-            if(validateRegisterCredentials(givenUsername,givenEmail,givenPassword, givenConfirmedPassword, this.users)){
+            if(validateRegisterCredentials(givenUsername,givenEmail)){
 
-                registerUserCredentials(givenUsername, givenEmail, givenPassword, this.users);
+                registerUserCredentials(givenUsername, givenEmail, givenPassword);
                 vm.put(MESSAGE_ATTRIBUTE, MESSAGE_SUCCESS_VALUE);
                 return new ModelAndView(vm, "home.ftl");
 
@@ -71,26 +73,19 @@ public class RegisterController implements TemplateViewRoute {
     }
 
     //Fix this function to validate credentials properly (Check if the combination is on the registered users list)
-    private boolean validateRegisterCredentials(String username, String email, String password, String confirmed_pass, ArrayList<User> users){
+    private boolean validateRegisterCredentials(String username, String email){
 
-        boolean isValid = true;
-
-        //check if the combination is not already on the list
-
-        for (int i=0; i<users.size(); i++)
-            if(users.get(i).getUserName().equals(username) || users.get(i).getEmail().equals(email)){
-                isValid = false;
-                break;
-            }
-
-
-        return isValid;
+        if (SQLiteConnection.validateRegistration().contains(username) || SQLiteConnection.validateRegistration().contains(email))
+            return false;
+        else
+            return true;
     }
 
-    private void registerUserCredentials (String username, String email, String password, ArrayList<User> users){
+    private void registerUserCredentials (String username, String email, String password){
 
-        User newUser = new User(username, email, password);
-        users.add(newUser);
+        //User newUser = new User(username, email, password);
+        //users.add(newUser);
+        SQLiteConnection.insertSubmitter(username, email, password);
 
     }
 

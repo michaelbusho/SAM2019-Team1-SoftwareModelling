@@ -1,5 +1,6 @@
 package com.sam2019.ui;
 
+import com.sam2019.model.SQLiteConnection;
 import com.sam2019.model.User;
 import spark.*;
 
@@ -30,7 +31,6 @@ public class HomeController implements TemplateViewRoute {
         //Create Session
         final Session session = request.session();
 
-
         vm.put("title", "Home Page");
 
 
@@ -51,11 +51,12 @@ public class HomeController implements TemplateViewRoute {
 
 
 
-            if(validateLoginCredentials(givenUsername, givenPassword, this.users, session)){
+            if(SQLiteConnection.validateLogin(givenUsername, givenPassword)){
 
-                response.redirect(WebServer.PROFILE_URL);
-                halt();
-                return null;
+                vm.put("title", "Profile Page");
+                vm.put("userName", givenUsername);
+
+                return new ModelAndView(vm, "profile.ftl");
             }else{
                 System.out.println("credentials not valid");
                 vm.put(MESSAGE_ATTRIBUTE, MESSAGE_FAIL_VALUE);
@@ -83,6 +84,7 @@ public class HomeController implements TemplateViewRoute {
         //check if the combination is already on the list
 
         //if username exists in users true else ...
+
 
 
         for (User currentUser : users)

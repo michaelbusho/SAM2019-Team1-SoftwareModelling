@@ -1,6 +1,7 @@
 package com.sam2019.model;
 
 
+import java.io.*;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,13 +40,13 @@ public class SQLiteConnection {
         }
     }
 
-    public static List<String> validateRegistration(){
+    public static List<String> validateRegistration() {
         String sql = "SELECT Username, Email FROM Submitters";
         List<String> usernames = new ArrayList<String>();
 
         try (Connection conn = connect();
-             Statement stmt  = conn.createStatement();
-             ResultSet rs    = stmt.executeQuery(sql)){
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
 
             // loop through the result set
             while (rs.next()) {
@@ -59,18 +60,18 @@ public class SQLiteConnection {
         }
     }
 
-    public static Boolean validateLogin(String username, String password){
+    public static Boolean validateLogin(String username, String password) {
         String sql = "SELECT Username, Password FROM Submitters WHERE Username = ?";
         String Username = "";
         String Password = "";
 
         try (Connection conn = connect();
-             PreparedStatement pstmt  = conn.prepareStatement(sql)){
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             // set the value
-            pstmt.setString(1,username);
+            pstmt.setString(1, username);
             //
-            ResultSet rs  = pstmt.executeQuery();
+            ResultSet rs = pstmt.executeQuery();
 
             // loop through the result set
             while (rs.next()) {
@@ -78,6 +79,135 @@ public class SQLiteConnection {
                 Password = rs.getString("Password");
             }
             if (Username.equals(username) && Password.equals(password))
+                return true;
+            else
+                return false;
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
+
+    public static void insertPaper(String title, String format, Boolean version, String authors, String contactAuthor, String filePath) {
+        // update sql
+        String insertSQL = "INSERT INTO Papers(Title, Format, Version, Authors, Contact_Author, Paper) VALUES(?,?,?,?,?,?)";
+        String updateSQL = "UPDATE Papers "
+                + "SET Format = ?, Version = ?, Authors = ?, Contact_Author = ?, Paper = ? "
+                + "WHERE Title = ?";
+
+        //if the new version checkbox is checked, update the row with the title (id)
+        if (version) {
+            try (Connection conn = connect();
+
+                 PreparedStatement pstmt = conn.prepareStatement(updateSQL)) {
+
+                // set parameters
+                pstmt.setString(1, format);
+                if (version)
+                    pstmt.setInt(2, getVersion(title) + 1);
+                pstmt.setString(3, authors);
+                pstmt.setString(4, contactAuthor);
+
+                pstmt.setBytes(5, readFile(filePath));
+                pstmt.setString(6, title);
+
+                pstmt.executeUpdate();
+                System.out.println("Updated  the file in the BLOB column.");
+
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+
+            }
+
+            //if the version checkbox is not checked, it means its a new paper (validation for primary key constrain is done on profileController)
+        } else {
+            try (Connection conn = connect();
+
+                 PreparedStatement pstmt = conn.prepareStatement(insertSQL)) {
+
+                // set parameters
+                pstmt.setString(1, title);
+                pstmt.setString(2, format);
+                if (version)
+                    pstmt.setInt(3, getVersion(title) + 1);
+                else
+                    pstmt.setInt(3, 0);
+                pstmt.setString(4, authors);
+                pstmt.setString(5, contactAuthor);
+                pstmt.setBytes(6, readFile(filePath));
+
+                pstmt.executeUpdate();
+                System.out.println("Stored the file in the BLOB column.");
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+
+            }
+        }
+    }
+
+    private static byte[] readFile(String file) {
+        ByteArrayOutputStream bos = null;
+        try {
+            File f = new File(file);
+            FileInputStream fis = new FileInputStream(f);
+            byte[] buffer = new byte[1024];
+            bos = new ByteArrayOutputStream();
+            for (int len; (len = fis.read(buffer)) != -1; ) {
+                bos.write(buffer, 0, len);
+            }
+            //close the file to be able to delete it
+            fis.close();
+            bos.close();
+        } catch (FileNotFoundException e) {
+            System.err.println(e.getMessage());
+        } catch (IOException e2) {
+            System.err.println(e2.getMessage());
+        }
+
+        return bos != null ? bos.toByteArray() : null;
+    }
+
+    private static int getVersion(String title) {
+        String sql = "SELECT Version FROM Papers WHERE Title = ?";
+        int version = 0;
+        try (Connection conn = connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // set the value
+            pstmt.setString(1, title);
+            //
+            ResultSet rs = pstmt.executeQuery();
+
+            // loop through the result set
+            while (rs.next()) {
+                version = rs.getInt("Version");
+            }
+            return version;
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return version;
+
+        }
+    }
+
+    public static Boolean existingPaper(String title){
+        String sql = "SELECT Title FROM Papers WHERE Title = ?";
+        String Title = "";
+        try (Connection conn = connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // set the value
+            pstmt.setString(1, title);
+            //
+            ResultSet rs = pstmt.executeQuery();
+
+            // loop through the result set
+            while (rs.next()) {
+                Title = rs.getString("Title");
+            }
+            if (Title.equals(title))
                 return true;
             else
                 return false;

@@ -1,15 +1,13 @@
 package com.sam2019.ui;
 
-import static spark.Spark.*;
-import static spark.SparkBase.staticFileLocation;
+import com.sam2019.model.User;
+import spark.TemplateEngine;
 
 import java.util.ArrayList;
 import java.util.Objects;
 
-import com.sam2019.model.User;
-import spark.Request;
-import spark.Session;
-import spark.TemplateEngine;
+import static spark.Spark.*;
+import static spark.SparkBase.staticFileLocation;
 
 
 /**
@@ -59,6 +57,7 @@ public class WebServer {
   public static final String REGISTER_URL = "/register";
   public static final String PROFILE_URL = "/profile";
   public static final String SIGNOUT_URL = "/signOut";
+  public static final String SUBMIT_PAPER_URL = "/submitPaper";
 
   //
   // Attributes
@@ -157,10 +156,16 @@ public class WebServer {
     post(REGISTER_URL, new RegisterController(usersDB), templateEngine);
 
     // Shows profile page.
-    get(PROFILE_URL, new ProfileController(), templateEngine);
+      get(PROFILE_URL, new ProfileController(), templateEngine);
+
+      //to upload paper submission
+      post(SUBMIT_PAPER_URL, new ProfileController(), templateEngine);
 
     // exit
     get(SIGNOUT_URL, new SignOutController(), templateEngine);
+
+    //Shows submit paper form
+      //get(SIGNOUT_URL, new SignOutController(), templateEngine);
 
 
   }

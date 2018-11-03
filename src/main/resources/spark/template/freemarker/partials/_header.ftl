@@ -10,8 +10,8 @@
 
             <nav id="nav-menu-container">
                 <ul class="nav-menu " style="padding-top: 7px;">
-                    <li class="menu-active"><a href="">Profile</a></li>
-                    <li><a href="">My papers</a></li>
+                    <li class="menu-active"><a href="/">Profile</a></li>
+                    <li><a href="/">My papers</a></li>
                     <!--     <li><a href="">Login</a> </li> -->
 
 

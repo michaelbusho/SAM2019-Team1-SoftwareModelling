@@ -12,8 +12,8 @@ public class SQLiteConnection {
         Connection connection = null;
 
         try {
-            // db parameters
-            String url = "jdbc:sqlite:D:/SAM2019.db";
+            // db parameters - Make this dynamic for app deployment
+            String url = "jdbc:sqlite:/Users/mike/sqlite/SAM2019.db";
             // create a connection to the database
             connection = DriverManager.getConnection(url);
 

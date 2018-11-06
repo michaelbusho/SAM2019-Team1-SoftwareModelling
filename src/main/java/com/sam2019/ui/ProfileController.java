@@ -26,6 +26,7 @@ public class ProfileController implements TemplateViewRoute {
         //Create Session
         final Session session = request.session();
         User currentUser = session.attribute("user");
+     //   String username = request.queryParams("contactAuthor");
 
         if (request.requestMethod() == WebServer.POST_METHOD) {
             System.out.println("Got a POST request on the ProfileController");
@@ -56,15 +57,15 @@ public class ProfileController implements TemplateViewRoute {
             String contactAuthor = request.raw().getParameter("contactAuthor");
 
             //if version checkbox is not selected, validate there is no other row with the same paper. I guess this would be better to do based on the exception the database insert throws about the constrain of primary key
-            if (newVersion == false && SQLiteConnection.existingPaper(title)) {
+            if (newVersion == false && SQLiteConnection.existingPaper(title, contactAuthor)) {
                 vm.put("errorExistingFile", "The Paper you are trying to upload is already added. If this is a new version, please mark the checkbox");
                 vm.put("title", "Profile Page");
-                vm.put("userName", currentUser == null ? null : currentUser.getUserName());
+                vm.put("userName", contactAuthor);
                 return new ModelAndView(vm, "profile.ftl");
-            } else if (newVersion == true && !SQLiteConnection.existingPaper(title)) {
+            } else if (newVersion == true && !SQLiteConnection.existingPaper(title, contactAuthor)) {
                 vm.put("errorExistingFile", "There is no paper added with that title yet, do not select the new version checkbox");
                 vm.put("title", "Profile Page");
-                vm.put("userName", currentUser == null ? null : currentUser.getUserName());
+                vm.put("userName", contactAuthor);
                 return new ModelAndView(vm, "profile.ftl");
             }
 
@@ -78,7 +79,7 @@ public class ProfileController implements TemplateViewRoute {
                 e.printStackTrace();
             }
 
-            
+
             Path out = Paths.get("temp/test.pdf");
             //delete the file temp/test.pdf
             try {
@@ -100,7 +101,7 @@ public class ProfileController implements TemplateViewRoute {
             }
 
             vm.put("title", "Profile Page");
-            vm.put("userName", currentUser == null ? null : currentUser.getUserName());
+            vm.put("userName", contactAuthor);
 
             //response.redirect(WebServer.PROFILE_URL);
             return new ModelAndView(vm, "profile.ftl");

@@ -192,14 +192,15 @@ public class SQLiteConnection {
         }
     }
 
-    public static Boolean existingPaper(String title){
-        String sql = "SELECT Title FROM Papers WHERE Title = ?";
+    public static Boolean existingPaper(String title, String author){
+        String sql = "SELECT Title FROM Papers WHERE Title = ? and Contact_Author = ?";
         String Title = "";
         try (Connection conn = connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             // set the value
             pstmt.setString(1, title);
+            pstmt.setString(2, author);
             //
             ResultSet rs = pstmt.executeQuery();
 

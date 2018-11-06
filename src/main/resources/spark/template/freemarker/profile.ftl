@@ -25,7 +25,7 @@
                 <input type="text" name="format" placeholder="Specify the format (ACM/IEEE, etc)" required="required"><br><br>
                 <input type="checkbox" name="version" value="on"> is this a new version of an existing paper?</input><br><br>
                 <input type="text" name="authors" placeholder="Authors (separate by coma(,)" required="required"><br><br>
-                <input type="text" name="contactAuthor" placeholder="Contact Author" required="required"><br><br>
+                <input type="text" name="contactAuthor" placeholder="Contact Author" readonly="readonly" value=${userName} ><br><br>
                 <label for="paper">Paper:</label><br>
                 <input type="file" required="required"
                        id="paper" name="paper"

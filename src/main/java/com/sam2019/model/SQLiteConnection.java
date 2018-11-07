@@ -89,60 +89,59 @@ public class SQLiteConnection {
         }
     }
 
-    public static void insertPaper(String title, String format, Boolean version, String authors, String contactAuthor, String filePath) {
+    public static Boolean insertPaper(String title, String format, String authors, String contactAuthor, String filePath) {
         // update sql
         String insertSQL = "INSERT INTO Papers(Title, Format, Version, Authors, Contact_Author, Paper) VALUES(?,?,?,?,?,?)";
+        //if the new version checkbox is checked, update the row with the title (id)
+        try (Connection conn = connect();
+
+             PreparedStatement pstmt = conn.prepareStatement(insertSQL)) {
+
+            // set parameters
+            pstmt.setString(1, title);
+            pstmt.setString(2, format);
+            pstmt.setInt(3, 0);
+            pstmt.setString(4, authors);
+            pstmt.setString(5, contactAuthor);
+            pstmt.setBytes(6, readFile(filePath));
+
+            pstmt.executeUpdate();
+            System.out.println("Stored the file in the BLOB column.");
+            return true;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return false;
+
+        }
+    }
+
+    public static Boolean updatePaper(String title, String format, String authors, String contactAuthor, String filePath) {
+        // update sql
         String updateSQL = "UPDATE Papers "
                 + "SET Format = ?, Version = ?, Authors = ?, Contact_Author = ?, Paper = ? "
                 + "WHERE Title = ?";
 
         //if the new version checkbox is checked, update the row with the title (id)
-        if (version) {
-            try (Connection conn = connect();
+        try (Connection conn = connect();
 
-                 PreparedStatement pstmt = conn.prepareStatement(updateSQL)) {
+             PreparedStatement pstmt = conn.prepareStatement(updateSQL)) {
 
-                // set parameters
-                pstmt.setString(1, format);
-                if (version)
-                    pstmt.setInt(2, getVersion(title) + 1);
-                pstmt.setString(3, authors);
-                pstmt.setString(4, contactAuthor);
+            // set parameters
+            pstmt.setString(1, format);
+            pstmt.setInt(2, getVersion(title) + 1);
+            pstmt.setString(3, authors);
+            pstmt.setString(4, contactAuthor);
 
-                pstmt.setBytes(5, readFile(filePath));
-                pstmt.setString(6, title);
+            pstmt.setBytes(5, readFile(filePath));
+            pstmt.setString(6, title);
 
-                pstmt.executeUpdate();
-                System.out.println("Updated  the file in the BLOB column.");
+            pstmt.executeUpdate();
+            System.out.println("Updated  the file in the BLOB column.");
+            return true;
 
-            } catch (SQLException e) {
-                System.out.println(e.getMessage());
-
-            }
-
-            //if the version checkbox is not checked, it means its a new paper (validation for primary key constrain is done on profileController)
-        } else {
-            try (Connection conn = connect();
-
-                 PreparedStatement pstmt = conn.prepareStatement(insertSQL)) {
-
-                // set parameters
-                pstmt.setString(1, title);
-                pstmt.setString(2, format);
-                if (version)
-                    pstmt.setInt(3, getVersion(title) + 1);
-                else
-                    pstmt.setInt(3, 0);
-                pstmt.setString(4, authors);
-                pstmt.setString(5, contactAuthor);
-                pstmt.setBytes(6, readFile(filePath));
-
-                pstmt.executeUpdate();
-                System.out.println("Stored the file in the BLOB column.");
-            } catch (SQLException e) {
-                System.out.println(e.getMessage());
-
-            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return false;
         }
     }
 
@@ -192,38 +191,9 @@ public class SQLiteConnection {
         }
     }
 
-    public static Boolean existingPaper(String title, String author){
-        String sql = "SELECT Title FROM Papers WHERE Title = ? and Contact_Author = ?";
-        String Title = "";
-        try (Connection conn = connect();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            // set the value
-            pstmt.setString(1, title);
-            pstmt.setString(2, author);
-            //
-            ResultSet rs = pstmt.executeQuery();
-
-            // loop through the result set
-            while (rs.next()) {
-                Title = rs.getString("Title");
-            }
-            if (Title.equals(title))
-                return true;
-            else
-                return false;
-
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-            return false;
-        }
-    }
-
-
-    public static List<String> getPapers(String author){
+    public static List<String> getPapers(String author) {
         String sql = "SELECT Title FROM Papers WHERE Contact_Author = ?";
-        List<String> Title = new ArrayList<>()
-                ;
+        List<String> Title = new ArrayList<>();
         try (Connection conn = connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 

@@ -28,10 +28,11 @@
         <input type="submit" value="Submit Paper">
     </form>
 
-<#if errorExistingFile??>
-    ${errorExistingFile}<br><br>
-
+<#if uploadMessage??>
+    ${uploadMessage}<br><br>
 </#if>
+
+
     <div class="row" style="padding-top: 5%;">
         <div class="col-md-6 papers">
             Submitted papers<br><br>

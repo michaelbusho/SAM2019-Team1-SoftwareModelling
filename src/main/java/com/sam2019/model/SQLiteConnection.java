@@ -219,4 +219,29 @@ public class SQLiteConnection {
         }
     }
 
+
+    public static List<String> getPapers(String author){
+        String sql = "SELECT Title FROM Papers WHERE Contact_Author = ?";
+        List<String> Title = new ArrayList<>()
+                ;
+        try (Connection conn = connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // set the value
+            pstmt.setString(1, author);
+            //
+            ResultSet rs = pstmt.executeQuery();
+
+            // loop through the result set
+            while (rs.next()) {
+                Title.add(rs.getString("Title"));
+            }
+            return Title;
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+
 }

@@ -14,6 +14,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ProfileController implements TemplateViewRoute {
@@ -28,33 +29,40 @@ public class ProfileController implements TemplateViewRoute {
         User currentUser = session.attribute("user");
      //   String username = request.queryParams("contactAuthor");
 
+        //region Manage form
+        if (request.raw().getAttribute("org.eclipse.multipartConfig") == null) {
+            MultipartConfigElement multipartConfigElement = new MultipartConfigElement(System.getProperty("java.io.tmpdir"));
+            request.raw().setAttribute("org.eclipse.multipartConfig", multipartConfigElement);
+        }
+
+        // dont know why, but without this getParameter does not work..
+        Collection<Part> parts = null;
+        try {
+            parts = request.raw().getParts();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ServletException e) {
+            e.printStackTrace();
+        }
+        //endregion
+
+        //region get data from parameters
+
+        String title = request.raw().getParameter("title");
+        String format = request.raw().getParameter("format");
+        Boolean newVersion = false;
+        if (request.raw().getParameter("version") != null)
+            if (request.raw().getParameter("version").equals("on"))
+                newVersion = true;
+        String authors = request.raw().getParameter("authors");
+        String contactAuthor = request.raw().getParameter("contactAuthor");
+
+        //endregion
+
+
+
         if (request.requestMethod() == WebServer.POST_METHOD) {
             System.out.println("Got a POST request on the ProfileController");
-
-            if (request.raw().getAttribute("org.eclipse.multipartConfig") == null) {
-                MultipartConfigElement multipartConfigElement = new MultipartConfigElement(System.getProperty("java.io.tmpdir"));
-                request.raw().setAttribute("org.eclipse.multipartConfig", multipartConfigElement);
-            }
-
-            //dont know why, but without this getParameter does not work..
-            Collection<Part> parts = null;
-            try {
-                parts = request.raw().getParts();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ServletException e) {
-                e.printStackTrace();
-            }
-
-            //get form parameters
-            String title = request.raw().getParameter("title");
-            String format = request.raw().getParameter("format");
-            Boolean newVersion = false;
-            if (request.raw().getParameter("version") != null)
-                if (request.raw().getParameter("version").equals("on"))
-                    newVersion = true;
-            String authors = request.raw().getParameter("authors");
-            String contactAuthor = request.raw().getParameter("contactAuthor");
 
             //if version checkbox is not selected, validate there is no other row with the same paper. I guess this would be better to do based on the exception the database insert throws about the constrain of primary key
             if (newVersion == false && SQLiteConnection.existingPaper(title, contactAuthor)) {
@@ -103,8 +111,7 @@ public class ProfileController implements TemplateViewRoute {
             vm.put("title", "Profile Page");
             vm.put("userName", contactAuthor);
 
-            //response.redirect(WebServer.PROFILE_URL);
-            return new ModelAndView(vm, "profile.ftl");
+
         }
         else if (request.requestMethod() == WebServer.GET_METHOD){
             System.out.println("Got a GET request on the ProfileController");
@@ -112,9 +119,15 @@ public class ProfileController implements TemplateViewRoute {
             vm.put("userName", currentUser == null ? null : currentUser.getUserName());
 
             //response.redirect(WebServer.);
-            return new ModelAndView(vm, "profile.ftl");
         }
         else
             return null;
+
+        List<String> papers = SQLiteConnection.getPapers(contactAuthor);
+        if (!papers.isEmpty()){
+            vm.put("uploadedPapers", papers);
+        }
+        //response.redirect(WebServer.PROFILE_URL);
+        return new ModelAndView(vm, "profile.ftl");
     }
 }

@@ -6,9 +6,8 @@ import spark.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-
-import static spark.Spark.halt;
 
 public class HomeController implements TemplateViewRoute {
 
@@ -55,6 +54,10 @@ public class HomeController implements TemplateViewRoute {
 
                 vm.put("title", "Profile Page");
                 vm.put("userName", givenUsername);
+                List<String> papers = SQLiteConnection.getPapers(givenUsername);
+                if (!papers.isEmpty()){
+                    vm.put("uploadedPapers", papers);
+                }
 
                 return new ModelAndView(vm, "profile.ftl");
             }else{

@@ -1,7 +1,10 @@
 package com.sam2019.model;
 
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -89,7 +92,7 @@ public class SQLiteConnection {
         }
     }
 
-    public static Boolean insertPaper(String title, String format, String authors, String contactAuthor, String filePath) {
+    public static Boolean insertPaper(String title, String format, String authors, String contactAuthor, InputStream file) {
         // update sql
         String insertSQL = "INSERT INTO Papers(Title, Format, Version, Authors, Contact_Author, Paper) VALUES(?,?,?,?,?,?)";
         //if the new version checkbox is checked, update the row with the title (id)
@@ -103,7 +106,7 @@ public class SQLiteConnection {
             pstmt.setInt(3, 0);
             pstmt.setString(4, authors);
             pstmt.setString(5, contactAuthor);
-            pstmt.setBytes(6, readFile(filePath));
+            pstmt.setBytes(6, readFile(file));
 
             pstmt.executeUpdate();
             System.out.println("Stored the file in the BLOB column.");
@@ -115,7 +118,7 @@ public class SQLiteConnection {
         }
     }
 
-    public static Boolean updatePaper(String title, String format, String authors, String contactAuthor, String filePath) {
+    public static Boolean updatePaper(String title, String format, String authors, String contactAuthor, InputStream file) {
         // update sql
         String updateSQL = "UPDATE Papers "
                 + "SET Format = ?, Version = ?, Authors = ?, Contact_Author = ?, Paper = ? "
@@ -132,7 +135,7 @@ public class SQLiteConnection {
             pstmt.setString(3, authors);
             pstmt.setString(4, contactAuthor);
 
-            pstmt.setBytes(5, readFile(filePath));
+            pstmt.setBytes(5, readFile(file));
             pstmt.setString(6, title);
 
             pstmt.executeUpdate();
@@ -145,18 +148,16 @@ public class SQLiteConnection {
         }
     }
 
-    private static byte[] readFile(String file) {
+    private static byte[] readFile(InputStream file) {
         ByteArrayOutputStream bos = null;
         try {
-            File f = new File(file);
-            FileInputStream fis = new FileInputStream(f);
             byte[] buffer = new byte[1024];
             bos = new ByteArrayOutputStream();
-            for (int len; (len = fis.read(buffer)) != -1; ) {
+            for (int len; (len = file.read(buffer)) != -1; ) {
                 bos.write(buffer, 0, len);
             }
             //close the file to be able to delete it
-            fis.close();
+            file.close();
             bos.close();
         } catch (FileNotFoundException e) {
             System.err.println(e.getMessage());

@@ -8,10 +8,6 @@ import javax.servlet.MultipartConfigElement;
 import javax.servlet.ServletException;
 import javax.servlet.http.Part;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -71,26 +67,12 @@ public class ProfileController implements TemplateViewRoute {
                 e.printStackTrace();
             }
 
-            Path out = Paths.get("temp/test.pdf");
-            //delete the file temp/test.pdf
             try {
-                Files.deleteIfExists(out.toAbsolutePath());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            //since was not able to get the path... copy the uploaded file into temp/test.pdf and send that path to the database
-            try (final InputStream in = uploadedFile.getInputStream()) {
-                Files.copy(in, out);
-                System.out.println(out.toString());
-                uploadedFile.getInputStream().close();
-                uploadedFile.delete();
-
                 //if new version checkbox is checked
                 if (newVersion) {
                     //if the title exists and belogns ot the user and newversion is checked, update it.
                     if (SQLiteConnection.getPapers(contactAuthor).contains(title)) {
-                        SQLiteConnection.updatePaper(title, format, authors, contactAuthor, out.toString());
+                        SQLiteConnection.updatePaper(title, format, authors, contactAuthor, uploadedFile.getInputStream());
                         vm.put("uploadMessage", title + " was updated successfully");
 
                     }
@@ -99,7 +81,7 @@ public class ProfileController implements TemplateViewRoute {
                         vm.put("uploadMessage", "The paper you are trying to update does not exist or belongs to someone else. De-select new version checkbox if this is a new paper.");
                 }
                 //if no new version, and database does not return unique constrain, insert
-                else if (SQLiteConnection.insertPaper(title, format, authors, contactAuthor, out.toString())) {
+                else if (SQLiteConnection.insertPaper(title, format, authors, contactAuthor, uploadedFile.getInputStream())) {
                     vm.put("uploadMessage", title + " was uploaded correctly");
                 }
                 //else error.
@@ -107,6 +89,13 @@ public class ProfileController implements TemplateViewRoute {
                     vm.put("uploadMessage", "The title of your paper is not unique or does not belong to you. If you have previously submitted a paper with this title, please mark the new version checkbox to update it");
 
 
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            //Delete the file
+            try {
+                uploadedFile.delete();
             } catch (IOException e) {
                 e.printStackTrace();
             }

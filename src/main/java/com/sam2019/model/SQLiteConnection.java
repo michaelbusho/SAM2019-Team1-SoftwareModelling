@@ -63,10 +63,12 @@ public class SQLiteConnection {
         }
     }
 
-    public static Boolean validateLogin(String username, String password) {
-        String sql = "SELECT Username, Password FROM Submitters WHERE Username = ?";
+    public static User validateLogin(String username, String password) {
+        String sql = "SELECT * FROM Submitters WHERE Username = ?";
         String Username = "";
         String Password = "";
+        String Email = "";
+        String Type = "";
 
         try (Connection conn = connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -80,15 +82,20 @@ public class SQLiteConnection {
             while (rs.next()) {
                 Username = rs.getString("Username");
                 Password = rs.getString("Password");
+                Email = rs.getString("Email");
+                Type = rs.getString("Type");
             }
-            if (Username.equals(username) && Password.equals(password))
-                return true;
+
+            if (Username.equals(username) && Password.equals(password)) {
+                User currentUser = new User(Username,Email,Password,Type);
+                return currentUser;
+            }
             else
-                return false;
+                return null;
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
-            return false;
+            return null;
         }
     }
 
@@ -192,22 +199,144 @@ public class SQLiteConnection {
         }
     }
 
-    public static List<String> getPapers(String author) {
-        String sql = "SELECT Title FROM Papers WHERE Contact_Author = ?";
-        List<String> Title = new ArrayList<>();
+    public static List<String> getPCMS() {
+
+        String theType = "PCM";
+        String sql = "SELECT Username FROM Submitters WHERE Type = ?";
+        List<String> userNames = new ArrayList<String>();
+
+        //int version = 0;
         try (Connection conn = connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             // set the value
-            pstmt.setString(1, author);
+            pstmt.setString(1, theType);
             //
             ResultSet rs = pstmt.executeQuery();
 
             // loop through the result set
             while (rs.next()) {
-                Title.add(rs.getString("Title"));
+                userNames.add(rs.getString("Username"));
+
             }
-            return Title;
+            return userNames;
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return null;
+
+        }
+    }
+
+
+    public static List<Paper> getPapersForSubmit(String Reviewer) {
+       String  sql = "SELECT * FROM Papers WHERE Reviewer1 = ? OR Reviewer2 = ? OR Reviewer3 = ?";
+
+        List<Paper> papers = new ArrayList<>();
+        try (Connection conn = connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // set the value
+            pstmt.setString(1, Reviewer);
+            pstmt.setString(2, Reviewer);
+            pstmt.setString(3, Reviewer);
+
+            ResultSet rs = pstmt.executeQuery();
+
+
+            // loop through the result set
+            while (rs.next()) {
+                String title = rs.getString("Title");
+                String format = rs.getString("Format");
+                String authors = rs.getString("Authors");
+                String contactAuthor = rs.getString("Contact_Author");
+                String Status = rs.getString("Status");
+                String reviewer1 = rs.getString("Reviewer1");
+                String reviewer2 = rs.getString("Reviewer2");
+                String reviewer3 = rs.getString("Reviewer3");
+                Paper currentPaper = new Paper(title,format,authors,contactAuthor, Status, reviewer1, reviewer2, reviewer3);
+                papers.add(currentPaper);
+            }
+            return papers;
+
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
+
+    }
+
+
+    public static boolean assignSubmitter1(String Reviewer1, String paper) {
+
+        String updateSQL = "UPDATE Papers "
+                + "SET Reviewer1 = ?"
+                + "WHERE Title = ?";
+
+
+        //String sql = "SELECT Username FROM Submitters WHERE Type = ?";
+
+        //int version = 0;
+        try (Connection conn = connect();
+             PreparedStatement pstmt = conn.prepareStatement(updateSQL)) {
+
+            // set the value
+            pstmt.setString(1, Reviewer1);
+            pstmt.setString(2, paper);
+            pstmt.executeUpdate();
+            System.out.println("selected reviewer.");
+            return true;
+
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return false;
+
+        }
+    }
+
+
+
+    public static List<Paper> getPapers(String author, String type) {
+
+        String sql = "";
+        if(type.equals("Submitter")){
+             sql = "SELECT * FROM Papers WHERE Contact_Author = ?";
+        }
+        else{
+            sql = "SELECT * FROM Papers";
+        }
+
+
+        List<Paper> papers = new ArrayList<>();
+
+
+        try (Connection conn = connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            if(type.equals("Submitter")){
+                // set the value
+                pstmt.setString(1, author);
+            }
+
+            //
+            ResultSet rs = pstmt.executeQuery();
+
+            // loop through the result set
+            while (rs.next()) {
+                String title = rs.getString("Title");
+                String format = rs.getString("Format");
+                String authors = rs.getString("Authors");
+                String contactAuthor = rs.getString("Contact_Author");
+                String Status = rs.getString("Status");
+                String reviewer1 = rs.getString("Reviewer1");
+                String reviewer2 = rs.getString("Reviewer2");
+                String reviewer3 = rs.getString("Reviewer3");
+                Paper currentPaper = new Paper(title,format,authors,contactAuthor, Status, reviewer1, reviewer2, reviewer3);
+                papers.add(currentPaper);
+            }
+            return papers;
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());

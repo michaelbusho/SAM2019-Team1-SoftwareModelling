@@ -4,11 +4,13 @@ public class User {
     String username;
     String email;
     String password;
+    String type;
 
-    public User(String userName, String email, String password){
+    public User(String userName, String email, String password, String type){
         this.username = userName;
         this.email = email;
         this.password = password;
+        this.type = type;
     }
 
     public String getUserName(){
@@ -21,5 +23,7 @@ public class User {
         return email;
     }
 
-
+    public String getType() {
+        return type;
+    }
 }

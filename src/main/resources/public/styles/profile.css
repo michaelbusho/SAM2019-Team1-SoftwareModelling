@@ -1,9 +1,379 @@
 .main-content{
 
-    margin: 8% auto;
+    margin-top: 90px;
+    margin-left: 10%;
     border: 1px solid gray;
-    min-height: 500px;
+    min-height: 85vh;
 }
 
-.paperForm{
+
+.greeting{
+    margin: 20px;
+    height: 150px;
+    width: 300px;
+    border: 1px solid gray;
 }
+
+.greeting .nameText{
+   display: inline;
+}
+
+table {
+    font-family: arial, sans-serif;
+    font-size: 15px;
+    border-collapse: collapse;
+    width: 100%;
+    margin: 0% auto;
+}
+
+td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+tr:nth-child(even) {
+    background-color: #ebfffa;
+}
+
+.fa_custom {
+    color: #c72d28;
+}
+
+.profile {
+    min-width: 100%;
+
+}
+
+.profile-header {
+    position: relative;
+    overflow: hidden;
+    min-height: 164px;
+}
+
+.profile-header .profile-header-cover {
+    background-image: url(/img/profileStripe.jpg);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0
+}
+
+.profile-header .profile-header-cover:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, .75) 100%)
+}
+
+.profile-header .profile-header-content {
+    color: #fff;
+    padding: 25px
+}
+
+.profile-header-img {
+    float: left;
+    width: 120px;
+    height: 120px;
+    overflow: hidden;
+    position: relative;
+    z-index: 10;
+    margin: 0 0 -20px;
+    padding: 3px;
+    border-radius: 4px;
+    background: #fff
+}
+
+.profile-header-img img {
+    max-width: 100%
+}
+
+
+
+.profile-header-info h4 {
+    font-weight: 500;
+    color: #fff
+}
+
+.profile-header-img+.profile-header-info {
+    margin-left: 140px
+}
+
+.profile-header .profile-header-content,
+.profile-header .profile-header-tab {
+    position: relative
+}
+
+
+.spaceDevide{
+    margin-bottom: 3rem;
+}
+
+
+.avatar--md .avatar__content img{
+    width:40px;
+    height:40px;
+}
+
+.list{
+    min-height: 300px;
+    max-height: 600px;
+    overflow: scroll;
+}
+
+.card {
+
+}
+.table-content{
+
+}
+
+.latest-content{
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+#tooltipAddNew{
+    background: #19aa8d;
+    border-color: transparent;
+}
+
+#tooltipAddNew:hover{
+    background: #198a8a;
+    border-color: transparent;
+}
+
+#tooltipAddNew:active{
+    background: #236b64;
+    outline: none;
+    border: none;
+}
+
+
+
+
+.latest-content-wrapper{
+    border-left: 1px solid lightgray;
+    border-right: 1px solid lightgray;
+    min-height: 400px;
+    background: linear-gradient(141deg, #f2f6f8 51%, #e0eff9 75%);
+    padding-top: 5px;
+    max-height: 100%;
+
+}
+
+.latest-title {
+    background: linear-gradient(141deg, #1fc8db 51%, #2cb5e8 75%);
+    color:white;
+    font-weight: 700;
+    font-family: "Montserrat", sans-serif;
+}
+
+[class*="noty_theme__unify--v1"] {
+    box-shadow: 0 2px 15px 0 rgba(0, 0, 0, 0.15);
+    border-radius: 4px;
+    max-width: 80%;
+    max-height: 250px;
+    overflow: hidden;
+    margin: 0 auto;
+    padding: 0.5rem;
+    color: #f2f7ff;
+
+}
+
+.noty_theme__unify--v1--dark {
+    background-color: #2e3c56;
+}
+
+.noty_theme__unify--v1--light {
+    background-color: #fff;
+    box-shadow: 0 2px 15px 0 rgba(0, 0, 0, 0.05);
+}
+
+.noty_type__success.noty_theme__unify--v1 {
+    background-color: green;
+}
+
+.noty_type__info.noty_theme__unify--v1 {
+    background-color: #1d75e5;
+}
+
+.noty_type__error.noty_theme__unify--v1 {
+    background-color: #e62154;
+}
+
+.noty_type__warning.noty_theme__unify--v1 {
+    background-color: #e6a821;
+}
+
+.notificationDate {
+    width: 80%;
+    padding-left: 35px;
+    color: #9c9896;
+    font-size: 11px;
+}
+
+.paper-options-btn{
+    background: none;
+    border-color: transparent;
+    color: #19aa8d;
+}
+
+.paper-options-btn:hover {
+    background: none;
+    border-color: transparent;
+    color: #236b64;
+}
+
+.drop-icon{
+    color: #19aa8d;
+}
+
+.dropdown-item:hover{
+   cursor: pointer;
+}
+
+.dropdown-item:active{
+    background: lightgray;
+    border-color: transparent;
+}
+
+.dropdown-item i{
+    padding-left: 10px;
+}
+
+
+
+
+
+/* The Modal (background) */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 9999; /* Sit on top */
+    padding-top: 100px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+    position: relative;
+    background-color: #fefefe;
+    margin: auto;
+    padding: 0;
+    border: 1px solid #888;
+    width: 60%;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+    -webkit-animation-name: animatetop;
+    -webkit-animation-duration: 0.4s;
+    animation-name: animatetop;
+    animation-duration: 0.4s;
+}
+
+.modal-content form {
+    padding-top: 1.8rem;
+}
+
+
+.modal-content label {
+
+    padding-right: 5px;
+}
+
+.modal-content input[type=text] {
+    height: 1.8rem;
+}
+
+/* Add Animation */
+@-webkit-keyframes animatetop {
+    from {top:-300px; opacity:0}
+    to {top:0; opacity:1}
+}
+
+@keyframes animatetop {
+    from {top:-300px; opacity:0}
+    to {top:0; opacity:1}
+}
+
+/* The Close Button */
+.close {
+    color: white;
+    float: right;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+
+}
+
+
+.modal-header {
+    padding: 2px 16px;
+    background-color: #19aa8d;
+    color: white;
+}
+
+.modal-header-delete {
+    padding: 2px 16px;
+    background-color: #c73311;
+    color: white;
+}
+
+
+
+.modal-header-assign {
+    padding: 2px 16px;
+    background-color: #19aa8d;
+    color: white;
+}
+
+
+.modal-body {padding: 2px 16px;}
+
+.modal-footer {
+    padding: 2px 16px;
+    text-align: center;
+
+    color: white;
+}
+
+
+
+
+.modal-footer input[type=submit] {
+    padding:5px 15px;
+    background:#3bc78f;
+    color: white;
+    border:0 none;
+    cursor:pointer;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    margin: 0.5rem 0;
+}
+
+.modal-footer input[type=submit]:hover {
+    background: #37b580;
+}
+
+.modal-footer input[type=submit]:active {
+    background: #2c9167;
+    outline: none;
+    border: none;
+}
+

@@ -1,13 +1,18 @@
 package com.sam2019.ui;
 
+import com.sam2019.model.SQLiteConnection;
 import com.sam2019.model.User;
 import spark.TemplateEngine;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import static spark.Spark.*;
 import static spark.SparkBase.staticFileLocation;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 
 /**
@@ -158,14 +163,47 @@ public class WebServer {
     // Shows profile page.
       get(PROFILE_URL, new ProfileController(), templateEngine);
 
-      //to upload paper submission
-      post(SUBMIT_PAPER_URL, new ProfileController(), templateEngine);
+    //to upload paper submission
+    post(PROFILE_URL, new ProfileController(), templateEngine);
 
     // exit
     get(SIGNOUT_URL, new SignOutController(), templateEngine);
 
+      get("/pcmReview", new PcmReviewController(), templateEngine);
+
+  post("/assign", new AssignController(), templateEngine);
+
     //Shows submit paper form
       //get(SIGNOUT_URL, new SignOutController(), templateEngine);
+
+
+  post("/reviewers/", (request, response) -> {
+
+      String info = request.body();
+      System.out.println(info);
+      final JSONObject jsonObj = new JSONObject(info);
+
+     // final JSONObject paperTitle = jsonObj.getJSONObject("paperTitle");
+
+      List<String> pcms = SQLiteConnection.getPCMS();
+
+      /*
+      BackupMoveController backupMove = new BackupMoveController( games);
+      final JSONObject type = new JSONObject();
+      if(backupMove.backUpMove(request)){
+          type.put("type","info");
+      }
+      //if move popped sucesfully return message.type === 'info')
+      return type;*/
+
+
+      JSONObject pcmsObj = new JSONObject();
+      pcmsObj.put("pcms", pcms);
+
+      return  pcmsObj;
+  });
+
+
 
 
   }

@@ -83,8 +83,6 @@ public class RegisterController implements TemplateViewRoute {
 
     private void registerUserCredentials (String username, String email, String password){
 
-        //User newUser = new User(username, email, password);
-        //users.add(newUser);
         SQLiteConnection.insertSubmitter(username, email, password);
 
     }

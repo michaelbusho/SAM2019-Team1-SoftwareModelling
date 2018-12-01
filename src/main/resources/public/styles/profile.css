@@ -409,3 +409,23 @@ tr:nth-child(even) {
 .SELECT_LIST{
 
 }
+
+
+.deadline{
+    border-right: 2px solid #2c9167;
+    border-bottom: 2px solid #2c9167;
+    border-top: 2px solid #2c9167;
+    background: lightyellow!important;
+}
+
+.papershow:hover{
+    cursor: pointer;
+}
+
+.papershowPCM {
+    color: gray;
+}
+
+.paperdisabled:hover{
+    cursor: auto;
+}

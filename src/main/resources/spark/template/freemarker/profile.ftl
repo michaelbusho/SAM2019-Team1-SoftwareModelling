@@ -10,6 +10,8 @@
 
 <div class="main-content col-sm-6 col-md-8 col-lg-10">
 
+
+
     <div class="row">
         <div class="profile">
             <div class="profile-header">
@@ -26,9 +28,14 @@
                     <!-- BEGIN profile-header-info -->
                     <div class="profile-header-info">
                         <h4 class="m-t-10 m-b-5">${user.getUserName()}</h4>
-                        <p class="m-b-10"> ${user.getType()}</p>
+                        <p class="m-b-10">Type: ${user.getType()}</p>
+
                     </div>
                     <!-- END profile-header-info -->
+
+
+
+
                 </div>
                 <!-- END profile-header-content -->
              </div>
@@ -38,6 +45,15 @@
     <div class="row spaceDevide">
 
     </div>
+
+
+
+    <div class="row">
+        <div  class="breadcrumb deadline">Submission Deadline: ${PaperSubmissionDeadline} </div>
+    </div>
+
+
+
 
 
     <div class="container float-left">
@@ -107,7 +123,7 @@
                                             ${paper.getStatus()}
                                         </span>
                                         </td>
-                                        <td class="align-middle">      <a href="#"><i class="far fa-file-pdf fa_custom fa-2x"></i> </a></td>
+                                        <td class="align-middle">      <button     type="button" class="papershow  <#if user.getType() == "PCM" && paper.getContactAuthor()!= user.getUserName()> paperdisabled  </#if>" <#if user.getType() == "PCM" && paper.getContactAuthor()!= user.getUserName()> disabled  </#if>   ><i class="far fa-file-pdf fa_custom fa-2x <#if user.getType() == "PCM" && paper.getContactAuthor()!= user.getUserName()> papershowPCM  </#if> "></i> </button></td>
                                         <td class="align-middle text-right">
                                             <div class="btn-group">
 
@@ -147,8 +163,15 @@
                                                     <!-- extra functions
                                                     <button type="button" tabindex="0" class="dropdown-item"><i class="drop-icon fa fa-fw fa-ticket mr-2"></i>Add Task</button>
                                                     <button type="button" tabindex="0" class="dropdown-item"><i class="drop-icon fa fa-fw fa-paperclip mr-2"></i>Add Files</button>  -->
-                                                    <div tabindex="-1" class="dropdown-divider"></div>
+
+                                                     <#if paper.getContactAuthor() = user.getUserName() >
+                                                      <div tabindex="-1" class="dropdown-divider"></div>
                                                     <button type="button" id="deletePaper" tabindex="0" class="dropdown-item deletePaper"><i class="drop-icon far fa-trash-alt"></i> Delete</button>
+                                                     </#if>
+
+
+
+
                                                 </div>
                                             </div>
                                         </td>
@@ -175,6 +198,7 @@
 
 
              <div class="col-md-4 latest float-right">
+
                <div  class="breadcrumb latest-title">Latest Notifications </div>
                 <hr>
 

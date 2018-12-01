@@ -14,6 +14,9 @@ import static spark.SparkBase.staticFileLocation;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletResponse;
+
 
 /**
  * The server that initializes the set of HTTP request handlers.
@@ -74,6 +77,7 @@ public class WebServer {
 
     public static final String PCC_REVIEW_PANEL =  "/pccReview";
 
+    public static final String VIEW_PAPER =  "/papers/:paperID";
   //
   // Attributes
   //
@@ -184,15 +188,46 @@ public class WebServer {
       get(PCM_REVIEW_PAPER, new PcmReviewPaperController(), templateEngine);
       post(PCM_REVIEW_PAPER, new PcmReviewPaperController(), templateEngine);
 
-  post(ASSIGN , new AssignController(), templateEngine);
+    post(ASSIGN , new AssignController(), templateEngine);
 
       post(REQUEST_REVIEW , new RequestController(), templateEngine);
 
       get(PCC_REVIEW_PANEL, new PccReviewPanelController(), templateEngine);
 
+     // get( VIEW_PAPER, new ViewPaperController(), templateEngine);
+
 
     //Shows submit paper form
       //get(SIGNOUT_URL, new SignOutController(), templateEngine);
+
+
+
+
+      get(VIEW_PAPER, (request,response)->{
+          String paperID = request.params(":paperID");
+
+          byte[] paperbytes =  SQLiteConnection.getFile(Integer.parseInt(paperID));
+
+          HttpServletResponse raw = response.raw();
+          response.header("Content-Disposition", "attachment; filename=paper" + paperID +".pdf");
+          response.type("application/force-download");
+
+          try {
+              raw.getOutputStream().write(paperbytes);
+              raw.getOutputStream().flush();
+              raw.getOutputStream().close();
+          } catch (Exception e) {
+
+              e.printStackTrace();
+          }
+
+          return raw;
+
+      });
+
+
+
+
 
 
   post("/reviewers/", (request, response) -> {
@@ -236,6 +271,8 @@ public class WebServer {
       ArrayList<String> guestRoutes =  new ArrayList<String>();
       ArrayList<String> adminRoutes =  new ArrayList<String>();
 
+
+
       //Guest routes
       guestRoutes.add(HOME_URL);
       guestRoutes.add(REGISTER_URL);
@@ -244,6 +281,12 @@ public class WebServer {
       //Admin routes
       adminRoutes.add(PROFILE_URL);
       adminRoutes.add(SIGNOUT_URL);
+      adminRoutes.add(PCM_REVIEW_PANEL);
+      adminRoutes.add(PCM_REVIEW_PAPER);
+      adminRoutes.add(ASSIGN);
+      adminRoutes.add(REQUEST_REVIEW);
+      adminRoutes.add(PCC_REVIEW_PANEL);
+      adminRoutes.add(VIEW_PAPER);
 
       // Restrict routes only for Guests
       for (String route : guestRoutes){

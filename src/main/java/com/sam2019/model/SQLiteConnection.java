@@ -332,7 +332,7 @@ public class SQLiteConnection {
 
             //
             ResultSet rs = pstmt.executeQuery();
-
+           
             // loop through the result set
             while (rs.next()) {
                 String id = rs.getString("paperID");
@@ -579,9 +579,40 @@ public class SQLiteConnection {
         }
         return null;
 
-
-
     }
+
+
+    public static byte[] getFile( int paperID) {
+        String sql = "SELECT Paper FROM Papers where paperID= ?";
+
+        System.out.println(sql + " " + paperID);
+        try (Connection conn = connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, paperID);
+
+            ResultSet rs = pstmt.executeQuery();
+
+            if (!rs.next()) {
+                System.out.println("No such file stored.");
+            } else {
+
+               byte[] paperBytes = rs.getBytes("Paper");
+                //InputStream blobStream = blob.getBinaryStream();
+                return paperBytes;
+            }
+
+
+        return null;
+
+
+        } catch (SQLException e) {
+            System.out.println("Some error: " + e.getMessage());
+        }
+        return null;
+    }
+
+
 
 
 

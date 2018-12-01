@@ -17,7 +17,7 @@ var btn = document.getElementById("tooltipAddNew");
 var deleteBtns = document.getElementsByClassName("deletePaper")
 var assignBtns = document.getElementsByClassName("asign");
 var requestBtns = document.getElementsByClassName("request");
-
+var papershowBtns = document.getElementsByClassName("papershow");
 
 
 var cancelbtn = document.getElementById("cancel-modal");
@@ -39,6 +39,25 @@ var requestCloseBtn = document.getElementById("requestClose");
 btn.onclick = function() {
     modal.style.display = "block";
 }
+
+
+
+
+for (i = 0; i < papershowBtns.length; i++) {
+
+    papershowBtns[i].onclick = function () {
+        var paperID = $(this).parent().parent().children( ".align-middle.tbl-id" ).children().text();
+
+        console.log(paperID);
+        window.open('/papers/'+paperID,'_self','');
+    }
+}
+
+
+
+
+
+
 
 // When the user clicks the delete button, open the delete modal
 for (i = 0; i < deleteBtns.length; i++) {

@@ -9,10 +9,11 @@ import javax.servlet.MultipartConfigElement;
 import javax.servlet.ServletException;
 import javax.servlet.http.Part;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 public class ProfileController implements TemplateViewRoute {
 
@@ -48,16 +49,13 @@ public class ProfileController implements TemplateViewRoute {
                 // save those reviewers to the paper
                 currentPaper.setSubmitters(submitters);
 
-
-                if(currentPaper.getSubmitters().size() < 1){
-                    System.out.println("Paper with title: " + currentPaper.getTitle() + " has no value");
-                }
             }
 
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            LocalDateTime submissionDeadline = LocalDate.of(2018, Month.DECEMBER, 18).atTime(23, 59);
+            String formattedDateTime = submissionDeadline.format(formatter);
 
-
-
-
+            vm.put("PaperSubmissionDeadline", formattedDateTime);
 
 
 

@@ -1,6 +1,15 @@
+html {
+    height: 100%;
+}
+
 body {
     color: #fff;
-    background: #7f4344;
+    background-image: url(/img/background.jpg);
+    background-repeat:no-repeat;
+    background-position:center;
+    background-size:cover;
+    padding:10px;
+    min-height: 100%;
 }
 
 .sam-title{
@@ -94,4 +103,8 @@ body {
     top: 18px;
     font-size: 7px;
     position: absolute;
+}
+
+.input-group-prepend{
+    width: 100%;
 }

@@ -1,14 +1,21 @@
 package com.sam2019.ui;
 
-import static spark.Spark.get;
-import static spark.Spark.post;
-import static spark.SparkBase.staticFileLocation;
-
-import java.util.ArrayList;
-import java.util.Objects;
-
+import com.sam2019.model.SQLiteConnection;
 import com.sam2019.model.User;
 import spark.TemplateEngine;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+import static spark.Spark.*;
+import static spark.SparkBase.staticFileLocation;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletResponse;
 
 
 /**
@@ -56,7 +63,21 @@ public class WebServer {
    * The URL pattern to request the Game page.
    */
   public static final String REGISTER_URL = "/register";
+  public static final String PROFILE_URL = "/profile";
+  public static final String SIGNOUT_URL = "/signOut";
+  public static final String SUBMIT_PAPER_URL = "/submitPaper";
 
+
+
+  public static final String PCM_REVIEW_PANEL = " /pcmReview";
+  public static final String PCM_REVIEW_PAPER = " /pcmReview/:paperName";
+  public static final String ASSIGN =  "/assign";
+
+    public static final String REQUEST_REVIEW =  "/requestReview";
+
+    public static final String PCC_REVIEW_PANEL =  "/pccReview";
+
+    public static final String VIEW_PAPER =  "/papers/:paperID";
   //
   // Attributes
   //
@@ -103,7 +124,6 @@ public class WebServer {
   public void initialize() {
     // Configuration to serve static files
     staticFileLocation("/public");
-
     //// Setting any route (or filter) in Spark triggers initialization of the
     //// embedded Jetty web server.
 
@@ -137,6 +157,12 @@ public class WebServer {
     //// Create separate Route classes to handle each route; this keeps your
     //// code clean; using small classes.
 
+
+
+    //Call function that sets all the url restrictions
+    setUrlRestrictions();
+
+
     // Shows Home page.
     get(HOME_URL, new HomeController(usersDB), templateEngine);
     // Obtain login try.
@@ -147,6 +173,143 @@ public class WebServer {
 
     // method to obtain register credential from user.
     post(REGISTER_URL, new RegisterController(usersDB), templateEngine);
+
+    // Shows profile page.
+      get(PROFILE_URL, new ProfileController(), templateEngine);
+
+    //to upload paper submission
+    post(PROFILE_URL, new ProfileController(), templateEngine);
+
+    // exit
+    get(SIGNOUT_URL, new SignOutController(), templateEngine);
+
+      get(PCM_REVIEW_PANEL, new PcmReviewController(), templateEngine);
+
+      get(PCM_REVIEW_PAPER, new PcmReviewPaperController(), templateEngine);
+      post(PCM_REVIEW_PAPER, new PcmReviewPaperController(), templateEngine);
+
+    post(ASSIGN , new AssignController(), templateEngine);
+
+      post(REQUEST_REVIEW , new RequestController(), templateEngine);
+
+      get(PCC_REVIEW_PANEL, new PccReviewPanelController(), templateEngine);
+
+     // get( VIEW_PAPER, new ViewPaperController(), templateEngine);
+
+
+    //Shows submit paper form
+      //get(SIGNOUT_URL, new SignOutController(), templateEngine);
+
+
+
+
+      get(VIEW_PAPER, (request,response)->{
+          String paperID = request.params(":paperID");
+
+          byte[] paperbytes =  SQLiteConnection.getFile(Integer.parseInt(paperID));
+
+          HttpServletResponse raw = response.raw();
+          response.header("Content-Disposition", "attachment; filename=paper" + paperID +".pdf");
+          response.type("application/force-download");
+
+          try {
+              raw.getOutputStream().write(paperbytes);
+              raw.getOutputStream().flush();
+              raw.getOutputStream().close();
+          } catch (Exception e) {
+
+              e.printStackTrace();
+          }
+
+          return raw;
+
+      });
+
+
+
+
+
+
+  post("/reviewers/", (request, response) -> {
+
+      String info = request.body();
+      System.out.println(info);
+      final JSONObject jsonObj = new JSONObject(info);
+
+     // final JSONObject paperID = jsonObj.getJSONObject("id");
+      String paperID = jsonObj.getString("paperID");
+
+
+      List<String> pcmsRequested = SQLiteConnection.getRequest(paperID);
+      List<String> pcms = SQLiteConnection.getPCMS(paperID);
+
+      /*
+      BackupMoveController backupMove = new BackupMoveController( games);
+      final JSONObject type = new JSONObject();
+      if(backupMove.backUpMove(request)){
+          type.put("type","info");
+      }
+      //if move popped sucesfully return message.type === 'info')
+      return type;*/
+
+
+      JSONObject pcmsObj = new JSONObject();
+      pcmsObj.put("pcmsrequested", pcmsRequested);
+      pcmsObj.put("pcms", pcms);
+
+      return  pcmsObj;
+  });
+
+
+
+
   }
+
+
+  private void setUrlRestrictions(){
+
+      ArrayList<String> guestRoutes =  new ArrayList<String>();
+      ArrayList<String> adminRoutes =  new ArrayList<String>();
+
+
+
+      //Guest routes
+      guestRoutes.add(HOME_URL);
+      guestRoutes.add(REGISTER_URL);
+
+
+      //Admin routes
+      adminRoutes.add(PROFILE_URL);
+      adminRoutes.add(SIGNOUT_URL);
+      adminRoutes.add(PCM_REVIEW_PANEL);
+      adminRoutes.add(PCM_REVIEW_PAPER);
+      adminRoutes.add(ASSIGN);
+      adminRoutes.add(REQUEST_REVIEW);
+      adminRoutes.add(PCC_REVIEW_PANEL);
+      adminRoutes.add(VIEW_PAPER);
+
+      // Restrict routes only for Guests
+      for (String route : guestRoutes){
+          before(route,(request, response) -> {
+              if (request.session().attribute("user")!=null) {
+                  response.redirect(PROFILE_URL);
+                  halt();
+              }
+          });
+      }
+
+      // Restrict routes only for Authorized
+      for (String route : adminRoutes){
+          before(route,(request, response) -> {
+
+              if (request.session().attribute("user")==null) {
+                  response.redirect(HOME_URL);
+                  halt();
+              }
+          });
+      }
+  }
+
+
 
 }

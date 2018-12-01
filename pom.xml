@@ -41,6 +41,13 @@
       <version>${freemarker.version}</version>
     </dependency>
 
+    <!-- SQLite -->
+    <dependency>
+      <groupId>org.xerial</groupId>
+      <artifactId>sqlite-jdbc</artifactId>
+      <version>3.23.1</version>
+    </dependency>
+
     <!-- START: Unit testing libraries -->
     <dependency>
       <groupId>junit</groupId>
@@ -55,7 +62,11 @@
       <scope>test</scope>
     </dependency>
     <!-- END: Unit testing libraries -->
-
+    <dependency>
+      <groupId>org.json</groupId>
+      <artifactId>json</artifactId>
+      <version>20180813</version>
+    </dependency>
   </dependencies>
 
   <build>

@@ -13,12 +13,16 @@
         </div>
 
         <h2>You are assigned to review these papers</h2>
-     <#if papers ??>
+     <#if papers?has_content>
 
          <#list papers as paper>
          <div>  Paper title: <a href="/pcmReview/${paper.getId()}"> ${paper.getTitle()}</a> </div>
          </#list>
+
+     <#else>
+     No more papers for review
      </#if>
+
     </div>
 
 

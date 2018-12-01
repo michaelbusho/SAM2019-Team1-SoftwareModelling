@@ -15,6 +15,10 @@
                              <li><a href="/pcmReview">Review Papers</a></li>
                     </#if>
 
+                    <#if user.getType() == "PCC">
+                     <li><a href="/pccReview">Review completed Papers</a></li>
+                    </#if>
+
                     <!--     <li><a href="">Login</a> </li> -->
 
 

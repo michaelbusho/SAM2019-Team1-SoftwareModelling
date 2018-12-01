@@ -344,8 +344,17 @@
                          <label for="paper">Paper id: </label><br>
                      </div>
 
-                     <div class="input-group">
-                         <label for="paper">PCM: </label><br>
+
+                     <div class="REQUEST_SELECT_LIST">
+                         <label for="paper">PCMS requesting this paper: </label><br>
+                         <select id="REQUEST_SELECT_LIST" style="overflow:auto;" name="reviewer">
+                         </select>
+                     </div>
+
+
+
+                     <div class=" SELECT_LIST">
+                         <label for="paper">Rest of the PCMs: </label><br>
                          <select id="SELECT_LIST" style="overflow:auto;" name="reviewer">
                          </select>
                      </div>
@@ -366,8 +375,7 @@
 
 
 
-
-
+<#if user.getType() == "PCM" >
  <!-- The request Modal -->
  <div id="requestModal" class="modal">
 
@@ -379,7 +387,7 @@
              <button type="button" id="requestClose"  class="float-right" data-dismiss="modal"><span aria-hidden="true">  <i class="far fa-window-close"></i>  </span><span class="sr-only">Close</span></button>
          </div>
 
-         <form id="paperForm" class="paperForm" role="form" action="/request" method="POST">
+         <form id="paperForm" class="paperForm" role="form" action="/requestReview" method="POST">
              <div class="modal-body">
 
                  <div id="paper-request" class="input-group">
@@ -401,7 +409,7 @@
 
      </div>
  </div>
-
+</#if>
 
 
 

@@ -227,7 +227,7 @@ public class SQLiteConnection {
                 userNames.add(rs.getString("Username"));
 
             }
-            
+
             return userNames;
 
         } catch (SQLException e) {
@@ -480,6 +480,109 @@ public class SQLiteConnection {
 
 
     }
+
+
+
+
+    public static Boolean insertRequest(String pcmName, String paperID) {
+        // update sql
+        String insertSQL = "INSERT INTO Requests(pcmName, paperID) VALUES(?,?)";
+        //if the new version checkbox is checked, update the row with the title (id)
+        try (Connection conn = connect();
+
+             PreparedStatement pstmt = conn.prepareStatement(insertSQL)) {
+
+            // set parameters
+            pstmt.setString(1, pcmName);
+            pstmt.setString(2, paperID);
+
+
+            pstmt.executeUpdate();
+            System.out.println("Stored request");
+            return true;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return false;
+
+        }
+    }
+
+
+
+    public static List<String> getRequest(String paperID) {
+
+        String sql = "SELECT pcmName FROM Requests WHERE paperID = ?";
+
+
+        List<String> requestedPCMS = new ArrayList<String>();
+
+
+        try (Connection conn = connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, paperID);
+            ResultSet rs = pstmt.executeQuery();
+
+            // loop through the result set
+            while (rs.next()) {
+                String pcm = rs.getString("pcmName");
+
+                requestedPCMS.add(pcm);
+            }
+            return requestedPCMS;
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+
+
+
+    public static List<Paper> getCompletedPapers() {
+
+
+        String sql = "SELECT *\n" +
+                "FROM Papers\n" +
+                "INNER JOIN Reviewers ON Papers.paperID = Reviewers.paperID\n" +
+                "GROUP BY Papers.paperID\n" +
+                "HAVING COUNT (Reviewers.completed) =3";
+
+
+
+
+        List<Paper> completedPapers = new ArrayList<>();
+
+
+        try (Connection conn = connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            //
+            ResultSet rs = pstmt.executeQuery();
+
+            // loop through the result set
+            while (rs.next()) {
+                String id = rs.getString("paperID");
+                String title = rs.getString("Title");
+                String format = rs.getString("Format");
+                String authors = rs.getString("Authors");
+                String contactAuthor = rs.getString("Contact_Author");
+                String Status = rs.getString("Status");
+
+                Paper currentPaper = new Paper(id,title,format,authors,contactAuthor, Status);
+                completedPapers.add(currentPaper);
+            }
+            return completedPapers;
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+
+
+
+    }
+
 
 
 }

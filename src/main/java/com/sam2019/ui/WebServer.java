@@ -70,6 +70,9 @@ public class WebServer {
   public static final String PCM_REVIEW_PAPER = " /pcmReview/:paperName";
   public static final String ASSIGN =  "/assign";
 
+    public static final String REQUEST_REVIEW =  "/requestReview";
+
+    public static final String PCC_REVIEW_PANEL =  "/pccReview";
 
   //
   // Attributes
@@ -183,6 +186,11 @@ public class WebServer {
 
   post(ASSIGN , new AssignController(), templateEngine);
 
+      post(REQUEST_REVIEW , new RequestController(), templateEngine);
+
+      get(PCC_REVIEW_PANEL, new PccReviewPanelController(), templateEngine);
+
+
     //Shows submit paper form
       //get(SIGNOUT_URL, new SignOutController(), templateEngine);
 
@@ -197,7 +205,7 @@ public class WebServer {
       String paperID = jsonObj.getString("paperID");
 
 
-
+      List<String> pcmsRequested = SQLiteConnection.getRequest(paperID);
       List<String> pcms = SQLiteConnection.getPCMS(paperID);
 
       /*
@@ -211,6 +219,7 @@ public class WebServer {
 
 
       JSONObject pcmsObj = new JSONObject();
+      pcmsObj.put("pcmsrequested", pcmsRequested);
       pcmsObj.put("pcms", pcms);
 
       return  pcmsObj;

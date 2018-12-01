@@ -121,16 +121,24 @@ if(assignCloseBtn != null){
         $('#paper-asign').children("input").remove();
         $('#paperidasd').children("input").remove();
         $('#SELECT_LIST').children().remove();
+        $('#REQUEST_SELECT_LIST').children().remove();
+
+    }
+}
+
+
+if(requestCloseBtn!= null){
+    requestCloseBtn.onclick =  function() {
+        requestModal.style.display = "none";
+        $('#paper-request').children("input").remove();
+        $('#paperRequestID').children("input").remove();
     }
 }
 
 
 
-requestCloseBtn.onclick =  function() {
-    requestModal.style.display = "none";
-    $('#paper-request').children("input").remove();
-    $('#paperRequestID').children("input").remove();
-}
+
+
 
 //** ON ANYWHERE CLICK CLOSE MODALS
 
@@ -147,6 +155,8 @@ window.onclick = function(event) {
         $('#paper-asign').children("input").remove();
         $('#paperidasd').children("input").remove();
         $('#SELECT_LIST').children().remove();
+        $('#REQUEST_SELECT_LIST').children().remove();
+
     }
     else if(event.target == requestModal){
         requestModal.style.display = "none";
@@ -170,12 +180,28 @@ function getReviewers(title, id) {
         success: function(data) {
             /* ...use the data to fill in some HTML elements... */
             //var obj = JSON.parse(data );
+            console.log(data);
+
+            var requestNames = data.pcmsrequested;
             var names = data.pcms;
 
             $('#SELECT_LIST').attr('size', names.length);
 
+
+            if(requestNames.length < 1){
+                $('#REQUEST_SELECT_LIST').append('<option value="null"> No PCMS have selected this paper </option>');
+            }else{
+                for (var i = 0; i < requestNames.length; i++) {
+                    $('#REQUEST_SELECT_LIST').append('<option value="' + requestNames[i] + '">' + requestNames[i] + '</option>');
+                }
+            }
+
+
+
+
+
             if(names.length < 1){
-                $('#SELECT_LIST').append('<option value="null"> No PCMS available </option>');
+                $('#SELECT_LIST').append('<option value="null"> No other PCMS available </option>');
             }
             else{
                 for (var i = 0; i < names.length; i++) {

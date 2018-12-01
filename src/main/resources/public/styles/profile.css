@@ -387,3 +387,25 @@ tr:nth-child(even) {
     border: none;
 }
 
+#REQUEST_SELECT_LIST{
+    overflow:auto;
+    width: 400px;
+    height: auto;
+    border: 1px solid mediumseagreen;
+
+}
+
+#SELECT_LIST {
+    overflow:auto;
+    width: 400px;
+    height: auto;
+    border: 1px solid gray;
+}
+
+.REQUEST_SELECT_LIST{
+
+}
+
+.SELECT_LIST{
+
+}

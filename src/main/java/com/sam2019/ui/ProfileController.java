@@ -41,8 +41,6 @@ public class ProfileController implements TemplateViewRoute {
             //Show available papers
             List<Paper> papers = SQLiteConnection.getPapers(currentUser.getUserName(), currentUser.getType());
 
-
-
             for(Paper currentPaper: papers){
 
                 //get all reviewers for that paper
@@ -55,9 +53,6 @@ public class ProfileController implements TemplateViewRoute {
                     System.out.println("Paper with title: " + currentPaper.getTitle() + " has no value");
                 }
             }
-
-
-
 
 
 

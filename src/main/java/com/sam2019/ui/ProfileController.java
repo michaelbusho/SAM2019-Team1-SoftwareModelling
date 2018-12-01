@@ -42,6 +42,33 @@ public class ProfileController implements TemplateViewRoute {
             List<Paper> papers = SQLiteConnection.getPapers(currentUser.getUserName(), currentUser.getType());
 
 
+
+            for(Paper currentPaper: papers){
+
+                //get all reviewers for that paper
+                List<String> submitters = SQLiteConnection.getReviewersNames(currentPaper.getId());
+                // save those reviewers to the paper
+                currentPaper.setSubmitters(submitters);
+
+
+                if(currentPaper.getSubmitters().size() < 1){
+                    System.out.println("Paper with title: " + currentPaper.getTitle() + " has no value");
+                }
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             if (!papers.isEmpty()){
               vm.put("uploadedPapers", papers);
             }

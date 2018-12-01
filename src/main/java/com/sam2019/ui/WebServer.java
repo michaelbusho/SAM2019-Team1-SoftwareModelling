@@ -64,6 +64,13 @@ public class WebServer {
   public static final String SIGNOUT_URL = "/signOut";
   public static final String SUBMIT_PAPER_URL = "/submitPaper";
 
+
+
+  public static final String PCM_REVIEW_PANEL = " /pcmReview";
+  public static final String PCM_REVIEW_PAPER = " /pcmReview/:paperName";
+  public static final String ASSIGN =  "/assign";
+
+
   //
   // Attributes
   //
@@ -169,9 +176,12 @@ public class WebServer {
     // exit
     get(SIGNOUT_URL, new SignOutController(), templateEngine);
 
-      get("/pcmReview", new PcmReviewController(), templateEngine);
+      get(PCM_REVIEW_PANEL, new PcmReviewController(), templateEngine);
 
-  post("/assign", new AssignController(), templateEngine);
+      get(PCM_REVIEW_PAPER, new PcmReviewPaperController(), templateEngine);
+      post(PCM_REVIEW_PAPER, new PcmReviewPaperController(), templateEngine);
+
+  post(ASSIGN , new AssignController(), templateEngine);
 
     //Shows submit paper form
       //get(SIGNOUT_URL, new SignOutController(), templateEngine);
@@ -183,9 +193,12 @@ public class WebServer {
       System.out.println(info);
       final JSONObject jsonObj = new JSONObject(info);
 
-     // final JSONObject paperTitle = jsonObj.getJSONObject("paperTitle");
+     // final JSONObject paperID = jsonObj.getJSONObject("id");
+      String paperID = jsonObj.getString("paperID");
 
-      List<String> pcms = SQLiteConnection.getPCMS();
+
+
+      List<String> pcms = SQLiteConnection.getPCMS(paperID);
 
       /*
       BackupMoveController backupMove = new BackupMoveController( games);

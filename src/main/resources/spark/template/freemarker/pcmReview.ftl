@@ -16,7 +16,7 @@
      <#if papers ??>
 
          <#list papers as paper>
-         <div>  Paper title: <a href="/pcmRate"> ${paper.getTitle()}</a> </div>
+         <div>  Paper title: <a href="/pcmReview/${paper.getId()}"> ${paper.getTitle()}</a> </div>
          </#list>
      </#if>
     </div>

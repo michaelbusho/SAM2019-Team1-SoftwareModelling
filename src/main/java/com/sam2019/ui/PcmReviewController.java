@@ -23,8 +23,9 @@ public class PcmReviewController implements TemplateViewRoute {
         User currentUser = session.attribute("user");
 
 
-        List<Paper> papers = SQLiteConnection.getPapersForSubmit(currentUser.getUserName());
-        System.out.println(papers.isEmpty());
+       List<Paper> papers = SQLiteConnection.getPapersForReview(currentUser.getUserName());
+       // List<Paper> papers = null;
+
         //select all papers where current username is one of the submitters
         vm.put("user", currentUser);
         vm.put("title", "Register Page");

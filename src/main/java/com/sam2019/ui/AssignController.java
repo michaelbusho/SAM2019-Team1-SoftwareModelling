@@ -19,9 +19,12 @@ public class AssignController implements TemplateViewRoute {
 
         //final String reviewer = request.queryParams(Player.PLAYER_NAME_ATTRIBUTE);
 
-        String reviewr1 = request.queryParams("reviewer");
+        String reviewer = request.queryParams("reviewer");
         String paper = request.queryParams("paper");
-        SQLiteConnection.assignSubmitter1(reviewr1,paper);
+        String paperID = request.queryParams("id");
+
+
+        SQLiteConnection.assignSubmitter(reviewer,paperID);
 
 
         response.redirect(WebServer.PROFILE_URL);

@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class SQLiteConnection {
@@ -199,10 +200,17 @@ public class SQLiteConnection {
         }
     }
 
-    public static List<String> getPCMS() {
+    public static List<String> getPCMS(String paperID) {
 
-        String theType = "PCM";
-        String sql = "SELECT Username FROM Submitters WHERE Type = ?";
+        String sql = "                SELECT Username\n" +
+                "        FROM Submitters\n" +
+                "        WHERE  Submitters.Username NOT IN ( SELECT reviewerName\n" +
+                "                FROM Reviewers\n" +
+                "                WHERE Reviewers.paperID == ?\n" +
+                "        ) AND Submitters.Type = \"PCM\"";
+
+
+
         List<String> userNames = new ArrayList<String>();
 
         //int version = 0;
@@ -210,7 +218,7 @@ public class SQLiteConnection {
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             // set the value
-            pstmt.setString(1, theType);
+            pstmt.setString(1, paperID);
             //
             ResultSet rs = pstmt.executeQuery();
 
@@ -219,6 +227,7 @@ public class SQLiteConnection {
                 userNames.add(rs.getString("Username"));
 
             }
+            
             return userNames;
 
         } catch (SQLException e) {
@@ -229,71 +238,72 @@ public class SQLiteConnection {
     }
 
 
-    public static List<Paper> getPapersForSubmit(String Reviewer) {
-       String  sql = "SELECT * FROM Papers WHERE Reviewer1 = ? OR Reviewer2 = ? OR Reviewer3 = ?";
+    public static List<Paper> getPapersForReview(String Reviewer) {
+
+        String  sql = " SELECT * \n" +
+                "        FROM Papers\n" +
+                "        INNER JOIN Reviewers ON Papers.paperID = Reviewers.paperID \n" +
+                "        AND Reviewers.reviewerName = ? AND Reviewers.completed = false ";
+
+
 
         List<Paper> papers = new ArrayList<>();
+
+
         try (Connection conn = connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            // set the value
             pstmt.setString(1, Reviewer);
-            pstmt.setString(2, Reviewer);
-            pstmt.setString(3, Reviewer);
-
+            //
             ResultSet rs = pstmt.executeQuery();
-
 
             // loop through the result set
             while (rs.next()) {
+                String id = rs.getString("paperID");
                 String title = rs.getString("Title");
                 String format = rs.getString("Format");
                 String authors = rs.getString("Authors");
                 String contactAuthor = rs.getString("Contact_Author");
                 String Status = rs.getString("Status");
-                String reviewer1 = rs.getString("Reviewer1");
-                String reviewer2 = rs.getString("Reviewer2");
-                String reviewer3 = rs.getString("Reviewer3");
-                Paper currentPaper = new Paper(title,format,authors,contactAuthor, Status, reviewer1, reviewer2, reviewer3);
+
+                Paper currentPaper = new Paper(id,title,format,authors,contactAuthor, Status);
                 papers.add(currentPaper);
             }
             return papers;
 
-
         } catch (SQLException e) {
             System.out.println(e.getMessage());
-            return null;
         }
+        return null;
 
     }
 
 
-    public static boolean assignSubmitter1(String Reviewer1, String paper) {
 
-        String updateSQL = "UPDATE Papers "
-                + "SET Reviewer1 = ?"
-                + "WHERE Title = ?";
+    public static boolean assignSubmitter(String reviewer, String paper) {
 
-
-        //String sql = "SELECT Username FROM Submitters WHERE Type = ?";
-
-        //int version = 0;
+        // update sql
+        String insertSQL = "INSERT INTO Reviewers(paperID, reviewerName) VALUES(?,?)";
+        //if the new version checkbox is checked, update the row with the title (id)
         try (Connection conn = connect();
-             PreparedStatement pstmt = conn.prepareStatement(updateSQL)) {
 
-            // set the value
-            pstmt.setString(1, Reviewer1);
-            pstmt.setString(2, paper);
+             PreparedStatement pstmt = conn.prepareStatement(insertSQL)) {
+
+            // set parameters
+            pstmt.setString(1, paper);
+            pstmt.setString(2, reviewer);
+
+
             pstmt.executeUpdate();
-            System.out.println("selected reviewer.");
+            System.out.println("Stored the reviewer assignment.");
             return true;
-
-
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             return false;
 
         }
+
+
     }
 
 
@@ -325,15 +335,14 @@ public class SQLiteConnection {
 
             // loop through the result set
             while (rs.next()) {
+                String id = rs.getString("paperID");
                 String title = rs.getString("Title");
                 String format = rs.getString("Format");
                 String authors = rs.getString("Authors");
                 String contactAuthor = rs.getString("Contact_Author");
                 String Status = rs.getString("Status");
-                String reviewer1 = rs.getString("Reviewer1");
-                String reviewer2 = rs.getString("Reviewer2");
-                String reviewer3 = rs.getString("Reviewer3");
-                Paper currentPaper = new Paper(title,format,authors,contactAuthor, Status, reviewer1, reviewer2, reviewer3);
+
+                Paper currentPaper = new Paper(id,title,format,authors,contactAuthor, Status);
                 papers.add(currentPaper);
             }
             return papers;
@@ -343,5 +352,134 @@ public class SQLiteConnection {
         }
         return null;
     }
+
+
+
+
+
+    public static Paper getPaper(String id) {
+        String sql = "SELECT * FROM Papers WHERE paperID = ?";
+
+
+
+        int version = 0;
+        try (Connection conn = connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // set the value
+            pstmt.setString(1, id);
+            //
+            ResultSet rs = pstmt.executeQuery();
+            Paper currentPaper = null;
+            // loop through the result set
+            while (rs.next()) {
+                String paperID = rs.getString("paperID");
+                String title = rs.getString("Title");
+                String format = rs.getString("Format");
+                String authors = rs.getString("Authors");
+                String contactAuthor = rs.getString("Contact_Author");
+                String Status = rs.getString("Status");
+
+                 currentPaper = new Paper(paperID,title,format,authors,contactAuthor, Status);
+            }
+
+            return currentPaper ;
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return null;
+
+        }
+    }
+
+
+
+
+    public static Boolean insertReview( String paperID, String reviewer, String comment, String rating) {
+        // update sql
+        String insertSQL = "INSERT INTO Reviews(paperID, reviewer, comment, rating) VALUES(?,?,?,?)";
+        //if the new version checkbox is checked, update the row with the title (id)
+        try (Connection conn = connect();
+
+             PreparedStatement pstmt = conn.prepareStatement(insertSQL)) {
+
+            // set parameters
+            pstmt.setString(1, paperID);
+            pstmt.setString(2, reviewer);
+            pstmt.setString(3, comment);
+            pstmt.setString(4, rating);
+
+            pstmt.executeUpdate();
+            System.out.println("Review stored  in the db.");
+            return true;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return false;
+
+        }
+    }
+
+
+    public static List<String> getReviewersNames(String paperID) {
+
+        String sql = "SELECT * FROM Reviewers WHERE paperID = ?";
+
+
+        List<String> reviewerAssignments = new ArrayList<String>();
+
+
+        try (Connection conn = connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, paperID);
+            // pstmt.setString(1, author);
+            ResultSet rs = pstmt.executeQuery();
+
+            // loop through the result set
+            while (rs.next()) {
+                String reviewerID = rs.getString("reviewerName");
+
+                reviewerAssignments.add(reviewerID);
+            }
+            return reviewerAssignments;
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+
+
+    public static boolean pcmCompleteReview(String reviewer, String paperID) {
+
+        // update sql
+        String updateSQL = "UPDATE Reviewers "
+                + "SET completed = ?"
+                + "WHERE reviewerName = ? AND paperID = ?";
+
+        //if the new version checkbox is checked, update the row with the title (id)
+        try (Connection conn = connect();
+
+             PreparedStatement pstmt = conn.prepareStatement(updateSQL)) {
+
+            // set parameters
+            pstmt.setBoolean(1, true);
+            pstmt.setString(2, reviewer);
+            pstmt.setString(3, paperID);
+
+            pstmt.executeUpdate();
+            System.out.println("Updated  the file .");
+            return true;
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+
+
+
+
+    }
+
 
 }

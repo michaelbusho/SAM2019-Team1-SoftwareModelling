@@ -1,26 +1,39 @@
 package com.sam2019.model;
 
+import java.util.List;
+import java.util.ArrayList;
 public class Paper {
 
+    private String id;
     private String title;
     private String format;
     private String authors;
     private String contactAuthor;
     private String status;
-    private String reviewer1;
-    private String reviewer2;
-    private String reviewer3;
+    private List<String> submitters = null;
 
-     public Paper(String title, String format, String authors, String contactAuthor, String status, String reviewer1, String reviewr2, String reviewer3){
+     public Paper(String id, String title, String format, String authors, String contactAuthor, String status){
+         this.id = id;
          this.title=title;
          this.format = format;
          this.authors = authors;
          this.contactAuthor = contactAuthor;
          this.status = status;
-         this.reviewer1 = reviewer1;
-         this.reviewer2 = reviewr2;
-         this.reviewer3 = reviewer3;
+
      }
+
+
+    public void setSubmitters(List<String> submitters) {
+        this.submitters = submitters;
+    }
+
+    public List<String> getSubmitters() {
+        return this.submitters;
+    }
+
+    public String getId() {
+        return id;
+    }
 
     public String getTitle() {
         return title;
@@ -58,15 +71,5 @@ public class Paper {
         return status;
     }
 
-    public String getReviewer1() {
-        return reviewer1;
-    }
 
-    public String getReviewer2() {
-        return reviewer2;
-    }
-
-    public String getReviewer3() {
-        return reviewer3;
-    }
 }

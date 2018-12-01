@@ -73,6 +73,7 @@
                         <table class="mb-0 table table-hover">
                             <thead>
                             <tr>
+                                <th class="align-middle bt-0" style="display: none"></th>
                                 <th class="align-middle bt-0">Title</th>
                                 <th class="align-middle bt-0">Submitter</th>
                                 <th class="align-middle bt-0">Authors</th>
@@ -88,6 +89,10 @@
                                  <#list uploadedPapers as paper>
                                  <!-- A paper-->
                                     <tr>
+                                        <td class="align-middle tbl-id" style="display: none">
+                                            <div>${paper.getId()}</div>
+                                        </td>
+
                                         <td class="align-middle tbl-title">
                                             <div>${paper.getTitle()}</div>
                                         </td>
@@ -112,30 +117,29 @@
                                                     <!--    <button type="button" tabindex="0" class="dropdown-item"><i class="drop-icon far fa-edit"></i> Edit </button>  -->
 
                                                      <#if user.getType() == "PCM" && paper.getContactAuthor() != user.getUserName()>
-                                                      <button type="button" tabindex="0" class="dropdown-item"><i class="drop-icon far fa-edit"></i> Request review </button>
+                                                      <button type="button" tabindex="0" class="dropdown-item request"><i class="drop-icon far fa-edit"></i> Request review </button>
                                                      </#if>
 
 
                                                     <div tabindex="-1" class="dropdown-divider"></div>
                                                     <!-- PCC can assign reviewers-->
                                                      <#if user.getType() == "PCC" >
-                                                         <#if paper.getReviewer1() ?? >
-                                                           <button type="button" tabindex="0" class="dropdown-item"><i class="drop-icon far fa-user"></i>  ${paper.getReviewer1()}</button>
+
+                                                         <#if paper.getSubmitters() ?has_content >
+
+                                                             <#list paper.getSubmitters() as submitter>
+                                                                <button type="button" tabindex="0" class="dropdown-item"><i class="drop-icon far fa-user"></i>  ${submitter}</button>
+                                                             </#list>
+
+                                                             <#if paper.getSubmitters()?size < 3 >
+                                                                   <button type="button" tabindex="0" class="dropdown-item asign reviewer1"><i class="drop-icon far fa-plus-square"></i> Assign reviewer</button>
+                                                             </#if>
+
                                                          <#else>
-                                                            <button type="button" tabindex="0" class="dropdown-item asign reviewer1"><i class="drop-icon far fa-plus-square"></i> Assign reviewer</button>
+                                                          <button type="button" tabindex="0" class="dropdown-item asign reviewer1"><i class="drop-icon far fa-plus-square"></i> Assign reviewer</button>
                                                          </#if>
 
-                                                         <#if paper.getReviewer2() ?? >
-                                                           <button type="button" tabindex="0" class="dropdown-item" ><i class="drop-icon far fa-user"></i>  ${paper.getReviewer2()}</button>
-                                                         <#else>
-                                                          <button type="button" tabindex="0" class="dropdown-item asign reviewer2"><i class="drop-icon far fa-plus-square"></i> Assign reviewer</button>
-                                                         </#if>
 
-                                                         <#if paper.getReviewer3() ?? >
-                                                             <button type="button" tabindex="0" class="dropdown-item"><i class="drop-icon far fa-user"></i>  ${paper.getReviewer3()}</button>
-                                                         <#else>
-                                                             <button type="button" tabindex="0" class="dropdown-item asign reviewer3"><i class="drop-icon far fa-plus-square"></i> Assign reviewer</button>
-                                                         </#if>
 
                                                      </#if>
 
@@ -315,34 +319,81 @@
  </div>
 
 
- <!-- The assign Modal -->
- <div id="assignModal" class="modal">
+
+
+<#if user.getType() == "PCC" >
+     <!-- The assign Modal -->
+     <div id="assignModal" class="modal">
+
+         <!-- Modal content -->
+         <div class="modal-content">
+             <div class="modal-header-assign">
+
+                 <h3 class="modal-title" id="lineModalLabel">Assign reviewer</h3>
+                 <button type="button" id="assignClose"  class="float-right" data-dismiss="modal"><span aria-hidden="true">  <i class="far fa-window-close"></i>  </span><span class="sr-only">Close</span></button>
+             </div>
+
+             <form id="paperForm" class="paperForm" role="form" action="/assign" method="POST">
+                 <div class="modal-body">
+
+                     <div id="paper-asign" class="input-group">
+                         <label for="paper">Paper for review: </label><br>
+                     </div>
+
+                     <div id="paperidasd" class="input-group" >
+                         <label for="paper">Paper id: </label><br>
+                     </div>
+
+                     <div class="input-group">
+                         <label for="paper">PCM: </label><br>
+                         <select id="SELECT_LIST" style="overflow:auto;" name="reviewer">
+                         </select>
+                     </div>
+
+
+                 </div>
+                 <div class="modal-footer justify-content-center">
+                     <input type="submit" value="Assign" class="float-left">
+                 </div>
+
+             </form>
+
+
+         </div>
+     </div>
+</#if>
+
+
+
+
+
+
+ <!-- The request Modal -->
+ <div id="requestModal" class="modal">
 
      <!-- Modal content -->
      <div class="modal-content">
-         <div class="modal-header-assign">
+         <div class="modal-header-request">
 
-             <h3 class="modal-title" id="lineModalLabel">Assign reviewer</h3>
-             <button type="button" id="assignClose"  class="float-right" data-dismiss="modal"><span aria-hidden="true">  <i class="far fa-window-close"></i>  </span><span class="sr-only">Close</span></button>
+             <h3 class="modal-title" id="lineModalLabel">Request this paper for review?</h3>
+             <button type="button" id="requestClose"  class="float-right" data-dismiss="modal"><span aria-hidden="true">  <i class="far fa-window-close"></i>  </span><span class="sr-only">Close</span></button>
          </div>
 
-         <form id="paperForm" class="paperForm" role="form" action="/assign" method="POST">
+         <form id="paperForm" class="paperForm" role="form" action="/request" method="POST">
              <div class="modal-body">
 
-                 <div id="paper-asign" class="input-group">
-                     <label for="paper">Paper for review: </label><br>
+                 <div id="paper-request" class="input-group">
+                     <label for="paper">Paper requested: </label><br>
                  </div>
 
-                 <div class="input-group">
-                     <label for="paper">PCM: </label><br>
-                     <select id="SELECT_LIST" style="overflow:auto;" name="reviewer">
-                     </select>
+                 <div id="paperRequestID" class="input-group" >
+                     <label for="paper">Paper id: </label><br>
                  </div>
 
 
              </div>
              <div class="modal-footer justify-content-center">
-                 <input type="submit" value="Assign" class="float-left">
+                 <input type="submit" value="Request" class="float-left">
              </div>
 
          </form>
@@ -350,6 +401,8 @@
 
      </div>
  </div>
+
+
 
 
 

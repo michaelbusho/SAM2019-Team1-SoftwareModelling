@@ -344,6 +344,16 @@ tr:nth-child(even) {
 }
 
 
+.modal-header-request {
+    padding: 2px 16px;
+    background-color: #19aa8d;
+    color: white;
+}
+
+
+
+
+
 .modal-body {padding: 2px 16px;}
 
 .modal-footer {

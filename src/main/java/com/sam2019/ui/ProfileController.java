@@ -35,38 +35,32 @@ public class ProfileController implements TemplateViewRoute {
         vm.put("title", "Profile Page");
         vm.put("user", currentUser);
 
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        LocalDateTime submissionDeadline = LocalDate.of(2018, Month.DECEMBER, 18).atTime(23, 59);
+        String formattedDateTime = submissionDeadline.format(formatter);
+
+        vm.put("PaperSubmissionDeadline", formattedDateTime);
+
+        //Show available papers
+        List<Paper> papers = SQLiteConnection.getPapers(currentUser.getUserName(), currentUser.getType());
+
+        for(Paper currentPaper: papers){
+
+            //get all reviewers for that paper
+            List<String> submitters = SQLiteConnection.getReviewersNames(currentPaper.getId());
+            // save those reviewers to the paper
+            currentPaper.setSubmitters(submitters);
+
+        }
+
+
+        if (!papers.isEmpty()){
+            vm.put("uploadedPapers", papers);
+        }
 
 
         if (request.requestMethod() == WebServer.GET_METHOD) {
-
-            //Show available papers
-            List<Paper> papers = SQLiteConnection.getPapers(currentUser.getUserName(), currentUser.getType());
-
-            for(Paper currentPaper: papers){
-
-                //get all reviewers for that paper
-                List<String> submitters = SQLiteConnection.getReviewersNames(currentPaper.getId());
-                // save those reviewers to the paper
-                currentPaper.setSubmitters(submitters);
-
-            }
-
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-            LocalDateTime submissionDeadline = LocalDate.of(2018, Month.DECEMBER, 18).atTime(23, 59);
-            String formattedDateTime = submissionDeadline.format(formatter);
-
-            vm.put("PaperSubmissionDeadline", formattedDateTime);
-
-
-
-
-
-
-            if (!papers.isEmpty()){
-              vm.put("uploadedPapers", papers);
-            }
-
-
+            
 
             return new ModelAndView(vm, "profile.ftl");
         }

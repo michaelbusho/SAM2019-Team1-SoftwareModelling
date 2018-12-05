@@ -11,7 +11,14 @@
             <nav id="nav-menu-container">
                 <ul class="nav-menu " style="padding-top: 7px;">
                     <li class="menu-active"><a href="/">Profile</a></li>
-                    <li><a href="/">My papers</a></li>
+                    <#if user.getType() == "PCM">
+                             <li><a href="/pcmReview">Review Papers</a></li>
+                    </#if>
+
+                    <#if user.getType() == "PCC">
+                     <li><a href="/pccReview">Review completed Papers</a></li>
+                    </#if>
+
                     <!--     <li><a href="">Login</a> </li> -->
 
 

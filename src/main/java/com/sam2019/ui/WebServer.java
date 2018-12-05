@@ -1,21 +1,16 @@
 package com.sam2019.ui;
 
 import com.sam2019.model.SQLiteConnection;
-import com.sam2019.model.User;
+import org.json.JSONObject;
 import spark.TemplateEngine;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import static spark.Spark.*;
 import static spark.SparkBase.staticFileLocation;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletResponse;
 
 
 /**
@@ -87,7 +82,6 @@ public class WebServer {
   private final TemplateEngine templateEngine;
 
   //This to be replaced with a some kind of a database
-  ArrayList<User> usersDB = new ArrayList<>();
 
   //
   // Constructor
@@ -164,15 +158,15 @@ public class WebServer {
 
 
     // Shows Home page.
-    get(HOME_URL, new HomeController(usersDB), templateEngine);
+    get(HOME_URL, new HomeController(), templateEngine);
     // Obtain login try.
-    post(HOME_URL, new HomeController(usersDB), templateEngine);
+    post(HOME_URL, new HomeController(), templateEngine);
 
     // Shows register page.
-    get(REGISTER_URL, new RegisterController(usersDB), templateEngine);
+    get(REGISTER_URL, new RegisterController(), templateEngine);
 
     // method to obtain register credential from user.
-    post(REGISTER_URL, new RegisterController(usersDB), templateEngine);
+    post(REGISTER_URL, new RegisterController(), templateEngine);
 
     // Shows profile page.
       get(PROFILE_URL, new ProfileController(), templateEngine);

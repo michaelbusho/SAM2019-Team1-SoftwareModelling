@@ -1,18 +1,13 @@
 package com.sam2019.ui;
 
 import com.sam2019.model.SQLiteConnection;
-import com.sam2019.model.User;
 import spark.ModelAndView;
 import spark.Request;
 import spark.Response;
 import spark.TemplateViewRoute;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
-import static spark.Spark.halt;
 
 
 public class RegisterController implements TemplateViewRoute {
@@ -22,11 +17,9 @@ public class RegisterController implements TemplateViewRoute {
     static final public String MESSAGE_SUCCESS_VALUE = "Account successfully created";
 
 
-    ArrayList<User> users = new ArrayList<>();
 
     //constructor
-    public RegisterController ( ArrayList<User> usersDB){
-        this.users = usersDB;
+    public RegisterController (){
     }
 
 

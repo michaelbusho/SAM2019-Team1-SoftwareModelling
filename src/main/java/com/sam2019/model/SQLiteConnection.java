@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class SQLiteConnection {
@@ -17,7 +16,7 @@ public class SQLiteConnection {
 
         try {
             // db parameters - Make this dynamic for app deployment
-            String url = "jdbc:sqlite:/Users/mike/sqlite/SAM2019.db";
+            String url = "jdbc:sqlite:/D:/SAM2019.db";
             // create a connection to the database
             connection = DriverManager.getConnection(url);
 

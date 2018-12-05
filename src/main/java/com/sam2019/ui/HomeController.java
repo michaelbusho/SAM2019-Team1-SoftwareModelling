@@ -4,9 +4,7 @@ import com.sam2019.model.SQLiteConnection;
 import com.sam2019.model.User;
 import spark.*;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static spark.Spark.halt;
@@ -15,13 +13,10 @@ public class HomeController implements TemplateViewRoute {
 
     static final private String MESSAGE_ATTRIBUTE = "message";
     static final private String MESSAGE_FAIL_VALUE = "Wrong credential combination!";
-    static final public String USER_ATTRIB = "user";
-
-    ArrayList<User> users = new ArrayList<>();
 
     //constructor
-    public HomeController ( ArrayList<User> usersDB){
-        this.users = usersDB;
+    public HomeController ( ){
+
     }
 
     @Override
@@ -72,6 +67,6 @@ public class HomeController implements TemplateViewRoute {
 
     }
 
-    
+
 
 }

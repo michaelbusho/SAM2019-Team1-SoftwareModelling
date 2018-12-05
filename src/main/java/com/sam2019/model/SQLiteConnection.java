@@ -16,7 +16,7 @@ public class SQLiteConnection {
 
         try {
             // db parameters
-            String url = "jdbc:sqlite:D:/SAM2019.db";
+            String url = "jdbc:sqlite:C:/Users/Arpita/Documents/SAM2019.db";
             // create a connection to the database
             connection = DriverManager.getConnection(url);
 

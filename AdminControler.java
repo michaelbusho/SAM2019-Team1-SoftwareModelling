@@ -14,7 +14,7 @@ import spark.Response;
 import spark.Session;
 import spark.TemplateViewRoute;
 
-public class HomeController implements TemplateViewRoute {
+public class AdminController implements TemplateViewRoute {
 
 	static final private String MESSAGE_ATTRIBUTE = "message";
 	static final private String MESSAGE_FAIL_VALUE = "Wrong credential combination!";
